@@ -1,19 +1,26 @@
 import express from 'express'
-import authMiddleware from '../../middleware/authMiddleware.js'
-import authorize from '../../middleware/roleMiddleware.js'
-import { create, getAll, getOne, update, deleteDepartment } from './department.controller.js'
+import authMiddleware from '../../middleware/auth.middleware.js'
+import authorize from '../../middleware/role.middleware.js'
+import { create, getAll, getOne, update, deleteDepartment, assignLeader, assignWorker, removeWorker, removeAssistant, assignAssistant } from './department.controller.js'
+import authorizeDepartmentLeader from '../../middleware/department.middleware.js'
 
 
 
 const router = express.Router()
 
-router.post('/', authMiddleware, authorize("admin"), create)
-router.get('/', authMiddleware, authorize("admin"), getAll)
-router.get('/:id',authMiddleware, authorize("admin"), getOne)
-router.patch('/:id', authMiddleware, authorize("admin"), update)
-router.delete('/:id', authMiddleware, authorize("admin"), deleteDepartment)
+router.use(authMiddleware)
+
+router.post('/', authorize("admin"), create)
+router.get('/', authorize("admin"), getAll)
+router.get('/:id',authorize("admin"), getOne)
+router.patch('/:id', authorize("admin"), update)
+router.delete('/:id', authorize("admin"), deleteDepartment)
 
 // Relationships
-router.patch('/:id/leader', authMiddleware, authorize("admin"), assignLeader)
+router.patch('/:id/leader', authorize("admin"), assignLeader)
+router.post('/:id/worker', authorize("admin"), assignWorker)
+router.post('/:id/assistant', authorizeDepartmentLeader, assignAssistant)
+router.delete('/:id/worker/:userId', authorize("admin"), removeWorker)
+router.delete('/:id/assistant/:userId', authorizeDepartmentLeader, removeAssistant)
 
-export default router
+export default router   

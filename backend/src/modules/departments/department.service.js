@@ -29,7 +29,6 @@ export const getDepartmentById = async (departmentId) => {
         .populate("leader", "name email profileImg")
         .populate("assistants", "name email profileImg")
         .populate("workers", "name email profileImg")
-        .sort({createdAt: -1})
 
     if(!department){
         throw new Error('Department not found')
@@ -80,7 +79,166 @@ export const makeLeader = async (userId, departmentId) => {
         throw new Error('User not found')
     }
 
-    if(!user.role !== 'worker){
-        throw new Error('User is not a worker')}
+    if(user.role !== 'worker'){
+        throw new Error('User is not a worker')
+    }
+    const isWorker = department.workers.some(
+    (worker) => worker.toString() === userId
+    );
+    
+    if(!isWorker){
+        throw new Error('User is not a part of this Department')
+    }
+
+    const isAssistant = department.assistants.some(
+    (assistant) => assistant.toString() === userId
+    );
+    
+    if(isAssistant){
+        department.assistants.pull(userId)
+    }
         
-}      
+    department.leader = userId
+    await department.save()
+    
+    return department.populate("leader", "name email profileImg")
+}
+
+export const makeWorker = async (userId, departmentId) => {
+    const department = await Department.findById(departmentId)
+    
+    if(!department) {
+        throw new Error('Department not found')
+    }
+
+    const user = await User.findById(userId)
+
+    if(!user){
+        throw new Error('User not found')
+    }
+
+    if(user.role !== 'worker'){
+        throw new Error('User is not a worker')
+    }
+
+    const alreadyWorker = department.workers.some(
+        (worker) => worker.toString() === userId
+    );
+
+    if(alreadyWorker){
+        throw new Error('User is already a part of this department')
+    }
+    
+    department.workers.push(user._id)
+    await department.save()
+    
+    return department.populate("workers", "name email profileImg")
+}
+
+export const makeAssistant = async (userId, departmentId) => {
+    const department = await Department.findById(departmentId)
+
+    if(!department){
+        throw new Error('Department not found')
+    }
+
+    const user = await User.findById(userId)
+
+    if(!user){
+        throw new Error('User not found')
+    }
+
+    if(user.role !== 'worker'){
+        throw new Error('User is not a worker')
+    }    
+
+    const isWorker = department.workers.some(
+      (worker) => worker.toString() === userId);
+
+    if(!isWorker){
+        throw new Error('User must be a worker in this department')
+    }
+
+    const isAssistant = department.assistants.some(
+      (assistant) => assistant.toString() === userId);
+
+    if(isAssistant){
+        throw new Error('User is already an Assistant')
+    }
+
+    if(department.leader?.toString() === userId)  {
+        throw new Error('Request rejected. A user cannot be both an assistant and a leader')
+    }
+
+    department.assistants.push(userId)
+    await department.save()
+
+    return department.populate("assistants", "name email profileImg" )
+}
+
+export const deleteWorker = async (userId, departmentId) => {
+    const department = await Department.findById(departmentId)
+
+    if(!department){
+        throw new Error('Department not found')
+    }
+
+    const user = await User.findById(userId)
+
+    if(!user){
+        throw new Error('User is not a worker')
+    }
+
+    const isWorker = department.workers.some(
+    (worker) => worker.toString() === userId
+    );
+
+    if(!isWorker){
+        throw new Error('User is not a worker')
+    }
+    
+    if(department.leader?.toString() === userId){
+        department.leader = null
+    }
+    
+    // Remove from Assistants  
+    const isAssistant = department.assistants.some(
+    (assistant) => assistant.toString() === userId
+    );
+
+    if(isAssistant){
+        department.assistants.pull(userId)
+    }
+
+    department.workers.pull(userId)
+    await department.save()
+
+    return department.populate("workers", "name email")
+}
+
+export const deleteAssistant = async (userId, departmentId) => {
+    const department = await Department.findById(departmentId)
+
+    if(!department){
+        throw new Error('Department not found')
+    }
+
+    const user = await User.findById(userId)
+    
+    if(!user){
+        throw new Error('User not found')
+    } 
+
+    const isAssistant = department.assistants.some(
+      (assistant) => assistant.toString() === userId
+    );
+    
+    if (!isAssistant) {
+      throw new Error("User is not an assistant in this department");
+    }
+    
+    department.assistants.pull(userId)
+    await department.save()
+
+    return department.populate("assistants", "name email")
+}

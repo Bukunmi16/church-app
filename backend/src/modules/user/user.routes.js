@@ -1,15 +1,17 @@
 import express from 'express'
-import authMiddleware from '../../middleware/authMiddleware.js'
-import authorize from '../../middleware/roleMiddleware.js'
+import authMiddleware from '../../middleware/auth.middleware.js'
+import authorize from '../../middleware/role.middleware.js'
 import { changeUserRole, changeUserStatus, deleteUser, getAllUsers, getOneUser } from './user.controller.js'
 
 const router = express.Router()
 
-router.get('/', authMiddleware, authorize('admin'), getAllUsers)
-router.get('/:id', authMiddleware, authorize('admin'), getOneUser)
-router.delete('/:id', authMiddleware, authorize('admin'), deleteUser)
-router.patch('/:id/role', authMiddleware, authorize('admin'), changeUserRole)
-router.patch('/:id/status', authMiddleware, authorize('admin'), changeUserStatus)
+router.use(authMiddleware)
+
+router.get('/', authorize('admin'), getAllUsers)
+router.get('/:id', authorize('admin'), getOneUser)
+router.delete('/:id', authorize('admin'), deleteUser)
+router.patch('/:id/role', authorize('admin'), changeUserRole)
+router.patch('/:id/status', authorize('admin'), changeUserStatus)
 
 
 export default router
