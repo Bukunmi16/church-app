@@ -30,7 +30,12 @@ export const getOneTeachingSeries = async (seriesId) => {
         throw new Error('Teaching Series not found')
     }
 
-    return series
+    const teachings = await Teaching.find({series : seriesId})
+    .populate("series", "title month year")
+    .populate("department", "name")
+    .populate("createdBy", "name role");
+
+    return { series, teachings }
 }
 
 export const updateTeachingSeries = async (seriesId, data) => {

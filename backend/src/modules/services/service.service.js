@@ -1,4 +1,5 @@
 import Service from "./service.model.js"
+import Teaching from "../teachings/teaching.model.js"
 
 export const createService = async (data) => {
     const {title, theme, preacher, serviceType, description, day, date, startTime, endTime, serviceImage} = data
@@ -32,7 +33,12 @@ export const getOneService = async (serviceId) => {
         throw new Error('Service not found')
     }
 
-    return service
+    const teachings = await Teaching.findById({service : serviceId})
+    .populate("service", "title date day")
+    .populate("department", "name")
+    .populate("createdBy", "name role");
+    
+    return {service, teachings}
 }
 
 export const updateService = async (serviceId, data) => {

@@ -39,35 +39,37 @@ export const createTeaching = async (data, userId) => {
         createdBy: creatorId
     })
 
-    return teaching
-    .populate("service", "title date day")
-    .populate("series", "title month year")
-    .populate("department", "name")
-    .populate("createdBy", "name role")    
+    await teaching.populate([
+      { path: "service", select: "title date day" },
+      { path: "series", select: "title month year" },
+      { path: "department", select: "name" },
+      { path: "createdBy", select: "name role" },
+    ]);
+
+    return teaching    
 }
 
 export const getAllTeachings = async () => {
     const teachings = await Teaching.find()
-    
+
     return teachings
-    .populate("service", "title date day")
-    .populate("series", "title month year")
-    .populate("department", "name")
-    .populate("createdBy", "name role") 
 }
 
-export const getOneTeachings = async (teachingId) => {
+export const getOneTeaching = async (teachingId) => {
     const teaching = await Teaching.findById(teachingId)
     
     if(!teaching){
         throw new Error('Cannot find Teaching')
     }
 
-    return teachings
-    .populate("service", "title date day")
-    .populate("series", "title month year")
-    .populate("department", "name")
-    .populate("createdBy", "name role") 
+    await teaching.populate([
+      { path: "service", select: "title date day" },
+      { path: "series", select: "title month year" },
+      { path: "department", select: "name" },
+      { path: "createdBy", select: "name role" },
+    ]);
+
+    return teaching
 }
 
 export const updateTeaching = async (teachingId, data) => {
@@ -143,6 +145,13 @@ export const updateTeaching = async (teachingId, data) => {
   }
 
   await teaching.save();
+
+  await teaching.populate([
+    { path: "service", select: "title date day" },
+    { path: "series", select: "title month year" },
+    { path: "department", select: "name" },
+    { path: "createdBy", select: "name role" },
+  ]);
 
   return teaching;
 }

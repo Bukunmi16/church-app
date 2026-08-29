@@ -8,6 +8,7 @@ import serviceRoutes from './modules/services/service.routes.js'
 import eventRoutes from './modules/events/event.routes.js'
 import teachingSeriesRoutes from './modules/teachingSeries/teaching-series.routes.js'
 import teachingRoutes from './modules/teachings/teaching.routes.js'
+import uploadRoutes from './modules/upload.js' 
 
 const PORT = 3000
 dotenv.config()
@@ -23,6 +24,7 @@ app.use('/api/services', serviceRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/teaching', teachingRoutes)
 app.use('/api/teaching-series', teachingSeriesRoutes)
+app.use('/api/upload', uploadRoutes)
 
 
 connectDB().then(() => {

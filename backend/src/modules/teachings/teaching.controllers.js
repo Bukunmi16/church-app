@@ -1,4 +1,4 @@
-import { createTeaching, getAllTeachings, getOneTeachings, updateTeaching,removeTeaching } from "./teaching.service.js"
+import { createTeaching, getAllTeachings, getOneTeaching, updateTeaching,removeTeaching } from "./teaching.service.js"
 
 export const create = async (req, res, next) => {
     try {
