@@ -1,14 +1,26 @@
 import Service from "./service.model.js"
 import Teaching from "../teachings/teaching.model.js"
+import {uploadToCloudinary, deleteFromCloudinary} from '../../utils/cloudinary.js'
 
-export const createService = async (data) => {
-    const {title, theme, preacher, serviceType, description, day, date, startTime, endTime, serviceImage} = data
+export const createService = async (data, file) => {
+
+    let imageData = null
+
+    if(file){
+        imageData = await uploadToCloudinary(
+            file.buffer, 
+            "church-app/services"
+        )
+    }
+
+
+    const {title, theme, preacher, serviceType, description, day, date, startTime, endTime} = data
 
     const service = await Service.create({
         title,
         theme,
         preacher,
-        serviceImage,
+        serviceImage: imageData,
         serviceType,
         description,
         day,
@@ -41,20 +53,33 @@ export const getOneService = async (serviceId) => {
     return {service, teachings}
 }
 
-export const updateService = async (serviceId, data) => {
+export const updateService = async (serviceId, data, file) => {
     const service = await Service.findById(serviceId)
 
     if(!service){
         throw new Error('Service not found')
     }
 
-    const { title, theme, preacher, serviceImage, serviceType, description,
+    if(file){
+        if(service.serviceImage?.publicId){
+            await deleteFromCloudinary(service.serviceImage.publicId)
+        }
+
+    const imageData = await uploadToCloudinary(
+            file.buffer,
+            "church-app/services"
+        )
+
+        service.serviceImage =  imageData
+    }
+
+
+    const { title, theme, preacher, serviceType, description,
         day, date, startTime, endTime } = data
 
     if(title) service.title = title
     if(theme) service.theme = theme
     if(preacher) service.preacher = preacher
-    if(serviceImage) service.serviceImage = serviceImage
     if(serviceType) service.serviceType = serviceType
     if(description !== undefined) service.description = description
     if(day) service.day = day
@@ -72,6 +97,10 @@ export const removeService = async (serviceId) => {
 
     if(!service){
         throw new Error('Service not found')
+    }
+
+    if(service.serviceImage?.publicId){
+        await deleteFromCloudinary(service.serviceImage.publicId)
     }
 
     await Service.findByIdAndDelete(serviceId)

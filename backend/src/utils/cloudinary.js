@@ -12,10 +12,23 @@ export const uploadToCloudinary = (fileBuffer, folder) => {
                 if (error) {
                     reject(error)
                 }else{
-                    resolve(result)
+                    resolve({
+                        url: result.secure_url,
+                        publicId: result.public_id
+                    })
                 }
             }
         )
         Readable.from(fileBuffer).pipe(uploadStream)
     })
+}
+
+export const deleteFromCloudinary = async (publicId) => {
+    if (!publicId) {
+        return;
+    }
+
+    const result = await cloudinary.uploader.destroy(publicId)
+
+    return result
 }

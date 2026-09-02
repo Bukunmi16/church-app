@@ -2,9 +2,19 @@ import Service from '../services/service.model.js'
 import TeachingSeries from '../teachingSeries/teaching-series.model.js'
 import Department from '../departments/department.model.js'
 import Teaching from '../teachings/teaching.model.js'
+import {uploadToCloudinary, deleteFromCloudinary } from '../../utils/cloudinary.js'
 
-export const createTeaching = async (data, userId) => {
-    const {title, description, preacher, service, series, videoUrl, audioUrl, thumbnail, department } = data
+export const createTeaching = async (data, userId, file) => {
+    let imageData = null
+
+    if(file){
+      imageData = await uploadToCloudinary(
+        file.buffer,
+        "church-app/teachings"
+      )
+    }
+
+    const {title, description, preacher, service, series, videoUrl, audioUrl, department } = data
 
     const departmentExists = await Department.findById(department)
 
@@ -34,7 +44,7 @@ export const createTeaching = async (data, userId) => {
         series: series, 
         videoUrl: videoUrl, 
         audioUrl: audioUrl, 
-        thumbnail: thumbnail, 
+        thumbnail: imageData, 
         department: department,
         createdBy: creatorId
     })
@@ -72,11 +82,25 @@ export const getOneTeaching = async (teachingId) => {
     return teaching
 }
 
-export const updateTeaching = async (teachingId, data) => {
+export const updateTeaching = async (teachingId, data, file) => {
   const teaching = await Teaching.findById(teachingId);
 
   if (!teaching) {
     throw new Error("Teaching not found");
+  }
+  
+  if(file){
+    if(teaching.thumbnail?.publicId){
+      await deleteFromCloudinary(teaching.thumbnail.publicId)
+    }
+
+    const imageData = await uploadToCloudinary(
+      file.buffer,
+      "church-app/teachings"
+    )
+
+    teaching.thumbnail = imageData
+
   }
 
   const {
@@ -88,7 +112,6 @@ export const updateTeaching = async (teachingId, data) => {
     department,
     videoUrl,
     audioUrl,
-    thumbnail,
   } = data;
 
   // Basic fields
@@ -97,7 +120,6 @@ export const updateTeaching = async (teachingId, data) => {
   if (preacher !== undefined) teaching.preacher = preacher;
   if (videoUrl !== undefined) teaching.videoUrl = videoUrl;
   if (audioUrl !== undefined) teaching.audioUrl = audioUrl;
-  if (thumbnail !== undefined) teaching.thumbnail = thumbnail;
 
   // Service relationship
   if (service !== undefined) {
@@ -161,6 +183,10 @@ export const removeTeaching = async (teachingId) => {
 
   if (!teaching) {
     throw new Error("Teaching not found");
+  }
+
+  if(teaching.thumbnail?.publicId){
+    await deleteFromCloudinary(teaching.thumbnail.publicId)
   }
 
   await Teaching.findByIdAndDelete(teachingId);

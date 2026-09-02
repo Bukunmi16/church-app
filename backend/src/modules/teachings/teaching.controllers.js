@@ -2,7 +2,7 @@ import { createTeaching, getAllTeachings, getOneTeaching, updateTeaching,removeT
 
 export const create = async (req, res, next) => {
     try {
-        const teaching = await createTeaching(req.body, req.user.id)
+        const teaching = await createTeaching(req.body, req.user.id, req.file)
 
         res.status(200).json({
             sucess: true,
@@ -47,7 +47,7 @@ export const getOne = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
     try {
-        const teaching = await updateTeaching(req.params.id, req.body)
+        const teaching = await updateTeaching(req.params.id, req.body, req.file)
 
         res.status(200).json({
             sucess: true,

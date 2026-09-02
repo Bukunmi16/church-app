@@ -2,7 +2,7 @@ import { createDepartment, getAllDepartments, getDepartmentById, updateDepartmen
 
 export const create = async (req, res, next) => {
     try {
-        const department = await createDepartment(req.body)
+        const department = await createDepartment(req.body, req.file)
 
         res.status(200).json({
             success: true,
@@ -44,7 +44,7 @@ export const getOne = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
     try {
-        const department = await updateDepartment(req.params.id, req.body)
+        const department = await updateDepartment(req.params.id, req.body, req.file)
         
         res.status(200).json({
             success: true,

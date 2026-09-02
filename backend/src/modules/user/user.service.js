@@ -1,4 +1,7 @@
+import bcrypt from "bcryptjs";
+import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudinary.js";
 import User from "./user.model.js";
+
 
 export const getUsers = async (page = 1, limit = 20, search, role, isActive) => {
   const skip = (page - 1) * limit;
@@ -112,6 +115,10 @@ export const removeUser = async (userId, currentUserId) => {
             throw new Error("User not found")
         }
 
+        if(user.profileImage?.publicId) {
+            await deleteFromCloudinary(user.profileImage.publicId)
+        }
+
         await User.findByIdAndDelete(userId)
     
         return {
@@ -121,3 +128,52 @@ export const removeUser = async (userId, currentUserId) => {
             role: user.role,
         }
     }
+
+export const updateUserDetails = async (userId, data, file) => {
+    const user = await User.findById(userId)
+
+    if(!user){
+        throw new Error('User does not exist')
+    }
+
+    if(file){
+        if(user.profileImage?.publicId) {
+            await deleteFromCloudinary(user.profileImage.publicId)
+        }
+    const imageData = await uploadToCloudinary(
+        file.buffer,
+        "church-app/users"
+    )
+        user.profileImage = imageData    
+    }
+
+    const {name, email, phone, password, dateOfBirth, gender, address} = data
+
+    if (email !== undefined) {
+        const existingUser = await User.findOne({
+        email: email.trim().toLowerCase(),
+         _id: { $ne: userId },
+      });
+
+    if (existingUser) {
+        throw new Error("Email is already in use");
+    }
+
+      user.email = email
+    }
+
+    if (password !== undefined) {
+     const hashedPassword = await bcrypt.hash(password, 12);
+    user.password = hashedPassword;
+    }
+    
+    if(name !== undefined) user.name = name
+    if(phone !== undefined) user.phone = phone
+    if(dateOfBirth !== undefined) user.dateOfBirth = dateOfBirth
+    if(gender !== undefined) user.gender = gender 
+    if(address !== undefined) user.address = address 
+
+    await user.save()
+
+    return user
+}

@@ -1,7 +1,18 @@
+import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudinary.js"
 import Event from "./event.model.js"
 
-export const createEvent = async (data, userId) => {
-    const {title, description, startTime, startDate, endDate, location, host, guestMinisters, endTime, image } = data
+export const createEvent = async (data, userId, file) => {
+
+    let imageData = null
+
+    if(file){
+        imageData = await uploadToCloudinary(
+            file.buffer, 
+            "church-app/events"
+        )
+    }
+
+    const {title, description, startTime, startDate, endDate, location, host, guestMinisters, endTime } = data
     
     const eventCreatorId = userId
     
@@ -9,16 +20,20 @@ export const createEvent = async (data, userId) => {
         throw new Error('End Date cannot be before Start Date')
     }
     
-    const guests = guestMinisters ?? []
+    const guests = (guestMinisters ?? "")
+      .split(",")
+      .map(name => name.trim())
+      .filter(name => name.length > 0); // removes empty strings from trailing commas etc.
+    
     const uniqueGuestMinisters = [...new Set(guests)];
     
-    if (uniqueGuestMinisters.length !== guestMinisters.length) {
-    throw new Error("Guest ministers cannot be duplicated");
+    if (uniqueGuestMinisters.length !== guests.length) {
+      throw new Error("Guest ministers cannot be duplicated");
     }
     
     const event = await Event.create({
         title: title,
-        image: image,
+        image: imageData,
         description: description,
         startTime: startTime, 
         startDate: startDate, 
@@ -39,8 +54,8 @@ export const getAllEvents = async () => {
     return events
 }
 
-export const getOneEvent = async (EventId) => {
-    const event = await Event.findById(EventId)
+export const getOneEvent = async (eventId) => {
+    const event = await Event.findById(eventId)
     
     if(!event) {
         throw new Error('Event not found')
@@ -49,31 +64,47 @@ export const getOneEvent = async (EventId) => {
     return event
 }
 
-export const updateEvent = async (EventId, data) => {
-    const event = await Event.findById(EventId)
+export const updateEvent = async (eventId, data, file) => {
+    const event = await Event.findById(eventId)
     
     if(!event){
         throw new Error('Event not found')
     }
     
-    const {title, description, startTime, startDate, endDate, location, host, guestMinisters, endTime, image} = data
+    const {title, description, startTime, startDate, endDate, location, host, guestMinisters, endTime} = data
 
     
     if(new Date(endDate) < new Date(startDate)){
         throw new Error('End Date cannot be before Start Date')
     }
 
-    const guests = guestMinisters ?? []
+    const guests = (guestMinisters ?? "")
+      .split(",")
+      .map(name => name.trim())
+      .filter(name => name.length > 0); // removes empty strings from trailing commas etc.
+
     const uniqueGuestMinisters = [...new Set(guests)];
 
-    if (uniqueGuestMinisters.length !== guestMinisters.length) {
+    if (uniqueGuestMinisters.length !== guests.length) {
       throw new Error("Guest ministers cannot be duplicated");
     }
+    
+    if(file){
+        if(event.image?.publicId){
+            await deleteFromCloudinary(event.image.publicId)
+        }
 
+        const imageData = await uploadToCloudinary(
+            file.buffer,
+            "church-app/events"
+        )
+
+        event.image =  imageData
+    }
+    
 
     if(title) event.title = title
     if(description !== undefined) event.description = description
-    if(image !== undefined) event.image = image
     if(startTime) event.startTime = startTime
     if(startDate) event.startDate = startDate
     if(endDate) event.endDate = endDate
@@ -89,12 +120,16 @@ export const updateEvent = async (EventId, data) => {
 
 export const removeEvent = async (eventId) => {
     const event = await Event.findById(eventId)
-
+    
     if(!event){
         throw new Error('Event not found')
     }
+    
+    if(event.image?.publicId){
+        await deleteFromCloudinary(event.image.publicId)
+    }
 
-    await event.findByIdAndDelete(EventId)
+    await Event.findByIdAndDelete(eventId)
 
     return event
 }

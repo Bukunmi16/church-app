@@ -20,8 +20,14 @@ const serviceSchema = new mongoose.Schema(
     },
 
     serviceImage: {
-    type: String,
-    default: null,
+      url: {
+        type: String,
+        default: null
+      },
+      publicId: {
+        type: String,
+        default: null
+      }
     },
     
     serviceType: {

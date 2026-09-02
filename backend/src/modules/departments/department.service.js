@@ -1,8 +1,18 @@
 import Department from "./department.model.js";
 import User from "../user/user.model.js";
+import {uploadToCloudinary, deleteFromCloudinary} from '../../utils/cloudinary.js'
 
-export const createDepartment = async (data) => {
-    const {name, description, image} = data
+export const createDepartment = async (data, file) => {
+    let imageData = null
+    
+    if(file){
+        imageData = await uploadToCloudinary(
+            file.buffer, 
+            "church-app/departments"
+        )
+    }
+
+    const {name, description} = data
 
     const existingDepartment = await Department.findOne({name})
 
@@ -10,7 +20,7 @@ export const createDepartment = async (data) => {
         throw new Error('Department already exists')
     }
 
-    const department = await Department.create({name, description, image})
+    const department = await Department.create({name, description, image: imageData})
 
     return department
 }
@@ -37,18 +47,31 @@ export const getDepartmentById = async (departmentId) => {
     return department
 }
 
-export const updateDepartment = async (departmentId, data) => {
+export const updateDepartment = async (departmentId, data, file) => {
     const department = await Department.findById(departmentId)
 
     if(!department) {
         throw new Error('Department not found')
     }
 
-    const {name, description, image} = data
+    const {name, description} = data
+
+    if(file){
+        if(department.image?.publicId){
+            await deleteFromCloudinary(department.image.publicId)
+        }   
+
+        const imageData = await uploadToCloudinary(
+            file.buffer,
+            "church-app/departments"
+        )
+
+        department.image =  imageData
+    }
+
 
     if(name) department.name = name
     if(description) department.description = description
-    if(image !== undefined) department.image = image
 
     await department.save()
 
@@ -61,10 +84,16 @@ export const removerDepartment = async (departmentId) => {
         throw new Error('Department does not exist')
     }
 
+    if(department.image?.publicId){
+        await deleteFromCloudinary(department.image.publicId)
+    }
+
     await Department.findByIdAndDelete(departmentId)
     
     return department
 }
+
+// RELATIONSHIPS
 
 export const makeLeader = async (userId, departmentId) => {
     const department = await Department.findById(departmentId)

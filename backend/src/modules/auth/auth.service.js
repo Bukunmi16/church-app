@@ -1,9 +1,18 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../user/user.model.js'
+import {uploadToCloudinary} from '../../utils/cloudinary.js'
 
-export const registerUser = async (data) => {
-    const {name, email, phone, password, dateOfBirth, gender, address, profileImage, role} = data
+export const registerUser = async (data, file) => {
+    let imageData = null
+    if (file) {
+        await uploadToCloudinary(
+            file.buffer,
+            "church-app/users"
+        )
+    }
+
+    const {name, email, phone, password, dateOfBirth, gender, address} = data
 
     const existingUser = await User.findOne({email})
 
@@ -21,8 +30,7 @@ export const registerUser = async (data) => {
         dateOfBirth, 
         gender, 
         address, 
-        profileImage, 
-        role
+        profileImage: imageData
     })
     
     return {

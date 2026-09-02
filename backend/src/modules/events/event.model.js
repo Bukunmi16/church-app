@@ -15,10 +15,16 @@ const eventSchema = new mongoose.Schema(
     },
 
     image: {
-      type: String,
-      default: null,
+      url: {
+        type: String,
+        default: null
+      },
+      publicId: {
+        type: String,
+        default: null
+      }
     },
-
+    
     startDate: {
       type: Date,
       required: true,

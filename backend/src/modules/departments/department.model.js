@@ -16,10 +16,16 @@ const DepartmentSchema = new mongoose.Schema (
     },
 
     image: {
-      type: String,
-      default: null,
+      url: {
+        type: String,
+        default: null
+      },
+      publicId: {
+        type: String,
+        default: null
+      }
     },
-
+    
     leader: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

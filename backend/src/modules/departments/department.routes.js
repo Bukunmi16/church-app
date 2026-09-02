@@ -3,17 +3,17 @@ import authMiddleware from '../../middleware/auth.middleware.js'
 import authorize from '../../middleware/role.middleware.js'
 import { create, getAll, getOne, update, deleteDepartment, assignLeader, assignWorker, removeWorker, removeAssistant, assignAssistant } from './department.controller.js'
 import authorizeDepartmentLeader from '../../middleware/department.middleware.js'
-
+import upload from '../../middleware/upload.js'
 
 
 const router = express.Router()
 
 router.use(authMiddleware)
 
-router.post('/', authorize("admin"), create)
+router.post('/', upload.single("image"), authorize("admin"), create)
 router.get('/', authorize("admin"), getAll)
 router.get('/:id',authorize("admin"), getOne)
-router.patch('/:id', authorize("admin"), update)
+router.patch('/:id', upload.single("image"), authorize("admin"), update)
 router.delete('/:id', authorize("admin"), deleteDepartment)
 
 // Relationships

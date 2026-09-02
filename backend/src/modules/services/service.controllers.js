@@ -3,7 +3,7 @@ import { createService, getAllServices, getOneService, removeService, updateServ
 
 export const create = async (req, res, next) => {
     try {
-        const service = await createService(req.body)
+        const service = await createService(req.body, req.file)
 
         res.status(200).json({
             sucess: true,
@@ -46,7 +46,7 @@ export const getOne = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
     try {
-        const service = await updateService(req.params.id, req.body)
+        const service = await updateService(req.params.id, req.body, req.file)
         
         res.status(200).json({
         sucess: true,

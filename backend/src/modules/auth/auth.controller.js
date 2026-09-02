@@ -3,7 +3,7 @@ import { loginUser, registerUser } from "./auth.service.js"
 
 export const register = async (req, res, next) => {
     try {
-     const user = await registerUser(req.body)
+     const user = await registerUser(req.body, req.file)
 
      res.status(200).json({
         succes: true,

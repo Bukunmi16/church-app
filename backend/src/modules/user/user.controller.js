@@ -1,4 +1,4 @@
-import { getUsers, findUserById, updateUserRole, toggleStatus, removeUser } from "./user.service.js"
+import { getUsers, findUserById, updateUserRole, updateUserDetails, toggleStatus, removeUser } from "./user.service.js"
 
 export const getAllUsers = async (req, res, next) => {
     try {
@@ -77,6 +77,19 @@ export const deleteUser = async (req, res, next) => {
             user
         })
 
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const update = async (req, res) => {
+    try {
+        const user = await updateUserDetails(req.params.id, req.body, req.file)
+
+        res.status(200).json({
+            message: "User Details Updated Successfully",
+            user
+        })
     } catch (error) {
         next(error)
     }
