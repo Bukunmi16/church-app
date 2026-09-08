@@ -1,16 +1,16 @@
 import Department from "./department.model.js";
 import User from "../user/user.model.js";
 import {uploadToCloudinary, deleteFromCloudinary} from '../../utils/cloudinary.js'
+import { defaultImages } from '../../config/defaultImages.js'
 
 export const createDepartment = async (data, file) => {
-    let imageData = null
     
-    if(file){
-        imageData = await uploadToCloudinary(
-            file.buffer, 
-            "church-app/departments"
-        )
-    }
+    const imageData = file
+    ? await uploadToCloudinary(file.buffer, "church-app/departments")
+    : {
+      url: defaultImages.department,
+      publicId: null,
+    };
 
     const {name, description} = data
 

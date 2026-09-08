@@ -15,7 +15,6 @@ const serviceSchema = new mongoose.Schema(
     },
     preacher: {
       type: String,
-      required: true,
       trim: true,
     },
 
@@ -36,11 +35,12 @@ const serviceSchema = new mongoose.Schema(
       enum: [
         "Teaching",
         "Celebration",
+        "Interactive Study",
         "Holy Ghost",
         "Thanksgiving",
         "Prayer",
         "Pulpit Exchange",
-        "Holy Communion",
+        "Healing and Communion",
         "Other",
       ],
     },

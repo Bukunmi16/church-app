@@ -1,16 +1,22 @@
+import { defaultImages } from "../../config/defaultImages.js";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudinary.js"
 import Event from "./event.model.js"
+import User from "../user/user.model.js";
+import Notification from "../notifications/notification.model.js";
+import { notifyAllActiveUsers } from "../notifications/notification.service.js";
+
+import { emailAllActiveUsers } from "../email/email.service.js"
+import { emailTemplateCreate, emailTemplateUpdate } from "../../utils/email.js"
+
 
 export const createEvent = async (data, userId, file) => {
 
-    let imageData = null
-
-    if(file){
-        imageData = await uploadToCloudinary(
-            file.buffer, 
-            "church-app/events"
-        )
-    }
+    const imageData = file
+    ? await uploadToCloudinary(file.buffer, "church-app/events")
+    : {
+      url: defaultImages.event,
+      publicId: null,
+    };
 
     const {title, description, startTime, startDate, endDate, location, host, guestMinisters, endTime } = data
     
@@ -45,7 +51,27 @@ export const createEvent = async (data, userId, file) => {
         createdBy: eventCreatorId
     })
 
-    return event.populate("createdBy", "name role")
+    await event.populate("createdBy", "name role")
+
+
+    await notifyAllActiveUsers({
+        title: "New Event",
+        message: `${event.title} has been added to the Church calender`,
+        type: "event",
+        relatedId: event._id, 
+        relatedModel: "Event"
+    })
+
+    await emailAllActiveUsers({
+        subject: `New Event: ${event.title}`,
+        html: emailTemplateCreate({
+            title: event.title,
+            relatedModel: "Event"
+        })
+    })
+
+
+    return event
 }
 
 export const getAllEvents = async () => {
@@ -73,7 +99,7 @@ export const updateEvent = async (eventId, data, file) => {
     
     const {title, description, startTime, startDate, endDate, location, host, guestMinisters, endTime} = data
 
-    
+
     if(new Date(endDate) < new Date(startDate)){
         throw new Error('End Date cannot be before Start Date')
     }
@@ -101,7 +127,7 @@ export const updateEvent = async (eventId, data, file) => {
 
         event.image =  imageData
     }
-    
+
 
     if(title) event.title = title
     if(description !== undefined) event.description = description
@@ -114,6 +140,22 @@ export const updateEvent = async (eventId, data, file) => {
     if(endTime) event.endTime = endTime
 
     await event.save()
+
+    await notifyAllActiveUsers({
+        title: "Event Updated",
+        message: `${event.name} details has been updated. Check the event details for the latest information`,
+        type: "event",
+        relatedId: event._id,
+        relatedModel: "Event",
+    })
+
+    await emailAllActiveUsers({
+        subject: `Event Updated: ${event.title}`,
+        html: emailTemplateUpdate({
+            title: event.title,
+            relatedModel: "Event"
+        })
+    })
 
     return event
 }

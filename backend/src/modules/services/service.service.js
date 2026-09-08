@@ -1,19 +1,22 @@
 import Service from "./service.model.js"
 import Teaching from "../teachings/teaching.model.js"
 import {uploadToCloudinary, deleteFromCloudinary} from '../../utils/cloudinary.js'
+import { defaultImages } from "../../config/defaultImages.js";
+import { notifyAllActiveUsers } from "../notifications/notification.service.js";
+
+import { emailAllActiveUsers } from "../email/email.service.js"
+import { emailTemplateCreate, emailTemplateUpdate } from "../../utils/email.js"
+
 
 export const createService = async (data, file) => {
 
-    let imageData = null
-
-    if(file){
-        imageData = await uploadToCloudinary(
-            file.buffer, 
-            "church-app/services"
-        )
-    }
-
-
+    const imageData = file
+    ? await uploadToCloudinary(file.buffer, "church-app/services")
+    : {
+      url: defaultImages.event,
+      publicId: null,
+    };
+    
     const {title, theme, preacher, serviceType, description, day, date, startTime, endTime} = data
 
     const service = await Service.create({
@@ -27,6 +30,24 @@ export const createService = async (data, file) => {
         date,
         startTime,
         endTime
+    })
+
+    await notifyAllActiveUsers({
+        title: "New Service",
+        message: `${service.title} has been added to the Church's calender`,
+        type: "service",
+        relatedId: service._id, 
+        relatedModel: "Service"
+    })
+
+    await emailAllActiveUsers({
+        subject: `New Service: ${service.title}`,
+        html: emailTemplateCreate({
+            title: service.title,
+            relatedModel: "Service",
+            description: service.description,
+            image: service.serviceImage?.url
+        })
     })
 
     return service
@@ -45,11 +66,12 @@ export const getOneService = async (serviceId) => {
         throw new Error('Service not found')
     }
 
-    const teachings = await Teaching.findById({service : serviceId})
+    const teachings = await Teaching.find({service : serviceId})
     .populate("service", "title date day")
     .populate("department", "name")
     .populate("createdBy", "name role");
     
+
     return {service, teachings}
 }
 
@@ -88,7 +110,25 @@ export const updateService = async (serviceId, data, file) => {
     if(endTime) service.endTime = endTime
 
     await service.save()
+    
+    await notifyAllActiveUsers({
+        title: "Service Updated",
+        message: `${service.name} details has been updated. Check the service details for the latest information`,
+        type: "service",
+        relatedId: service._id,
+        relatedModel: "Service",
+    })
 
+    await emailAllActiveUsers({
+        subject: `Service Updated: ${service.title}`,
+        html: emailTemplateUpdate({
+            title: service.title,
+            relatedModel: "Service",
+            description: service.description,
+            image: service.serviceImage?.url,   
+        })
+    })
+    
     return service
 }
 

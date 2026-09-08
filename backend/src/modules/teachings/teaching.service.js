@@ -3,16 +3,20 @@ import TeachingSeries from '../teachingSeries/teaching-series.model.js'
 import Department from '../departments/department.model.js'
 import Teaching from '../teachings/teaching.model.js'
 import {uploadToCloudinary, deleteFromCloudinary } from '../../utils/cloudinary.js'
+import { defaultImages } from '../../config/defaultImages.js'
+
+import { notifyAllActiveUsers } from '../notifications/notification.service.js'
+import { emailAllActiveUsers } from "../email/email.service.js"
+import { emailTemplateCreate, emailTemplateUpdate } from "../../utils/email.js"
 
 export const createTeaching = async (data, userId, file) => {
-    let imageData = null
 
-    if(file){
-      imageData = await uploadToCloudinary(
-        file.buffer,
-        "church-app/teachings"
-      )
-    }
+    const imageData = file
+    ? await uploadToCloudinary(file.buffer, "church-app/teachings")
+    : {
+      url: defaultImages.teaching,
+      publicId: null,
+    };
 
     const {title, description, preacher, service, series, videoUrl, audioUrl, department } = data
 
@@ -55,6 +59,23 @@ export const createTeaching = async (data, userId, file) => {
       { path: "department", select: "name" },
       { path: "createdBy", select: "name role" },
     ]);
+
+    await notifyAllActiveUsers({
+        title: "New Teaching",
+        message: `${teaching.title} has been published`,
+        type: "teaching",
+        relatedId: teaching._id, 
+        relatedModel: "Teaching"
+    })
+
+    await emailAllActiveUsers({
+        subject: `New Teaching: ${teaching.title}`,
+        html: emailTemplateCreate({
+            title: teaching.title,
+            relatedModel: "Teaching"
+        })
+    })
+
 
     return teaching    
 }
@@ -174,6 +195,22 @@ export const updateTeaching = async (teachingId, data, file) => {
     { path: "department", select: "name" },
     { path: "createdBy", select: "name role" },
   ]);
+
+  await notifyAllActiveUsers({
+      title: "Teaching Updated",
+      message: `${teaching.name} details has been updated. Check the teaching details for the latest information`,
+      type: "teaching",
+      relatedId: teaching._id,
+      relatedModel: "Teaching",
+  })
+
+    await emailAllActiveUsers({
+        subject: `Teaching Updated: ${teaching.title}`,
+        html: emailTemplateUpdate({
+            title: teaching.title,
+            relatedModel: "Teaching"
+        })
+    })
 
   return teaching;
 }

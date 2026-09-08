@@ -1,5 +1,11 @@
+import { notifyAllActiveUsers } from "../notifications/notification.service.js"
+
+import { emailAllActiveUsers } from "../email/email.service.js"
+import { emailTemplateCreate } from "../../utils/email.js"
+
 import Teaching from "../teachings/teaching.model.js"
 import TeachingSeries from "./teaching-series.model.js"
+
 
 export const createTeachingSeries = async (data, userId) => {
     const {title, description, month, year} = data
@@ -13,6 +19,23 @@ export const createTeachingSeries = async (data, userId) => {
         year: year,
         createdBy: creatorId
     })
+
+    await notifyAllActiveUsers({
+        title: `${series.month} Teaching Series`,
+        message: `New Monthly Series! Check out the series for more details`,
+        type: "teachingSeries",
+        relatedId: series._id,
+        relatedModel: "TeachingSeries",
+    })
+
+    await emailAllActiveUsers({
+        subject: `New Teaching Series: ${series.title}`,
+        html: emailTemplateCreate({
+            title: series.title,
+            relatedModel: "TeachingSeries"
+        })
+    })
+
 
     return series 
 }
