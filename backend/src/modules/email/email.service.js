@@ -32,7 +32,7 @@ export const emailAllActiveUsers = async ({subject, html}) => {
             console.log("Sending email to:", user.email);
 
             await sendEmail({
-                to: "bukunmiadigun14@gmail.com",
+                to: user.email,
                 subject,
                 html
             });

@@ -66,9 +66,12 @@ export const createEvent = async (data, userId, file) => {
         subject: `New Event: ${event.title}`,
         html: emailTemplateCreate({
             title: event.title,
-            relatedModel: "Event"
+            relatedModel: "Event",
+            description: event.description,
+            image: event.image?.url,   
         })
     })
+    
 
 
     return event
@@ -153,7 +156,9 @@ export const updateEvent = async (eventId, data, file) => {
         subject: `Event Updated: ${event.title}`,
         html: emailTemplateUpdate({
             title: event.title,
-            relatedModel: "Event"
+            relatedModel: "Event",
+            description: event.description,
+            image: event.image?.url,   
         })
     })
 

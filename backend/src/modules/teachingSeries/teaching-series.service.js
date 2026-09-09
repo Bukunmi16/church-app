@@ -32,7 +32,9 @@ export const createTeachingSeries = async (data, userId) => {
         subject: `New Teaching Series: ${series.title}`,
         html: emailTemplateCreate({
             title: series.title,
-            relatedModel: "TeachingSeries"
+            relatedModel: "Teaching Series",
+            description: series.description,
+ 
         })
     })
 

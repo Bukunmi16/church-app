@@ -72,7 +72,9 @@ export const createTeaching = async (data, userId, file) => {
         subject: `New Teaching: ${teaching.title}`,
         html: emailTemplateCreate({
             title: teaching.title,
-            relatedModel: "Teaching"
+            relatedModel: "Teaching",
+            description: teaching.description,
+            image: teaching.thumbnail?.url,   
         })
     })
 
@@ -208,7 +210,9 @@ export const updateTeaching = async (teachingId, data, file) => {
         subject: `Teaching Updated: ${teaching.title}`,
         html: emailTemplateUpdate({
             title: teaching.title,
-            relatedModel: "Teaching"
+            relatedModel: "Teaching",
+            description: teaching.description,
+            image: teaching.thumbnail?.url,   
         })
     })
 
