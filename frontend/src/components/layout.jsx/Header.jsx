@@ -1,6 +1,6 @@
 import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import useUIStore from "../store/ui.store";
+import useUIStore from "../../stores/ui.store";
 
 // TODO: replace with real auth/user data once wired up
 const currentUser = {
@@ -35,6 +35,7 @@ const Header = () => {
                     </h1>
                     </h2>
                 </div>
+                        <p className="font-thin font-damion text-[12px] lg:block hidden text-[#D62839]">Home of the blessed people</p>
             </div>
 
             <div className="md:hidden flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-[#D62839]">

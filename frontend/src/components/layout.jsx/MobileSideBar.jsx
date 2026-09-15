@@ -2,7 +2,7 @@ import React from 'react'
 import { X } from 'lucide-react'
 import Sidebar from './Sidebar'
 
-import useUIStore from '../store/ui.store'
+import useUIStore from '../../stores/ui.store'
 
 const MobileSideBar = () => {
 

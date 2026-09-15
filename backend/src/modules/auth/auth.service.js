@@ -100,5 +100,34 @@ export const loginUser = async (data) => {
     },
     accessToken,
     refreshToken
+    }
 }
-}
+
+export const refreshAccessToken = async (refreshToken) => {
+    if (!refreshToken) {
+        throw new Error("Refresh token required");
+    }
+
+    const decoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET
+    );
+
+    const user = await User.findById(decoded.userId).select("-password");
+
+    if (!user) {
+        throw new Error("User no longer exists");
+    }
+
+    if (!user.isActive) {
+        throw new Error("Your account has been deactivated");
+    }
+
+    const accessToken = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "15m" }
+    );
+
+    return accessToken;
+};

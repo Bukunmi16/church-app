@@ -12,7 +12,7 @@ import {
     ChevronsRight,
 } from "lucide-react";
 import { NavLink } from "react-router";
-import useUIStore from "../store/ui.store";
+import useUIStore from "../../stores/ui.store";
 
 const navigation = [
     {

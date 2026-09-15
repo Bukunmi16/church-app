@@ -12,6 +12,8 @@ import teachingSeriesRoutes from './modules/teachingSeries/teaching-series.route
 import teachingRoutes from './modules/teachings/teaching.routes.js'
 import notificationRoutes from './modules/notifications/notification.routes.js'
 import emailRoutes from './modules/email/email.route.js'
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 const PORT = 3000
 
@@ -19,6 +21,12 @@ const app = express()
 
 
 app.use(express.json())
+app.use(cookieParser())
+app.use(cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+    }))
+
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/departments', departmentRoutes)

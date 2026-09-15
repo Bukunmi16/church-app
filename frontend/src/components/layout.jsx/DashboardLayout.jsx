@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 import DesktopSideBar from "./Sidebar";
 import MobileSideBar from "./MobileSideBar";
 import Header from "./Header";
-import useUIStore from "../store/ui.store";
+import useUIStore from "../../stores/ui.store";
 
 const DashboardLayout = () => {
 
