@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router";
 import useUIStore from "../../stores/ui.store";
+import useAuthStore from "@/stores/auth.store";
 
 const navigation = [
     {
@@ -45,6 +46,13 @@ const Sidebar = ({ forceExpanded = false }) => {
     const desktopCollapsed = useUIStore((state) => state.desktopSidebarOpen);
     const onToggle = useUIStore((state) => state.toggleDesktopSidebar);
     const closeMobileSidebar = useUIStore((state) => state.closeMobileSidebar);
+
+    const logout = useAuthStore((state) => state.logout)
+
+    const handleLogout = () => {
+        logout()
+        closeMobileSidebar()
+    }
 
     // When rendered inside the mobile drawer, always show expanded
     // regardless of the desktop collapsed state in the store.
@@ -147,6 +155,7 @@ const Sidebar = ({ forceExpanded = false }) => {
                     className={`flex w-full items-center gap-3 rounded-md py-2.5 text-sm font-medium text-[#8A8C94] transition-colors hover:bg-[#141518] hover:text-[#EDEDEF] ${
                         collapsed ? "justify-center px-0" : "px-3"
                     }`}
+                    onClick={handleLogout}
                 >
                     <LogOut size={20} strokeWidth={1.75} className="shrink-0" />
                     {!collapsed && <span className="whitespace-nowrap">Logout</span>}

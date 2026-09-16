@@ -1,12 +1,12 @@
 import useAuthStore from '@/stores/auth.store'
 import React from 'react'
 
-const Dashboard = () => {
+const WorkerDashboard = () => {
     const user  = useAuthStore((state) => state.user)
-  
+    
   return (
-    <div>Dashboard</div>
+    <div>Welcome { user.name }</div>
   )
 }
 
-export default Dashboard
+export default WorkerDashboard

@@ -1,7 +1,7 @@
 import useAuthStore from '@/stores/auth.store'
 import React from 'react'
 import { Navigate, Outlet } from 'react-router'
-import LoadingScreen from '../../pages/Loading'
+import LoadingScreen from '../ui/Loading'
 
 const ProtectedRoute = () => {
   

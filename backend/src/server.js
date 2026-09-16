@@ -12,6 +12,7 @@ import teachingSeriesRoutes from './modules/teachingSeries/teaching-series.route
 import teachingRoutes from './modules/teachings/teaching.routes.js'
 import notificationRoutes from './modules/notifications/notification.routes.js'
 import emailRoutes from './modules/email/email.route.js'
+import dashboardRoutes from './modules/dashboard/dashboard.routes.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 
@@ -36,6 +37,7 @@ app.use('/api/teachings', teachingRoutes)
 app.use('/api/teaching-series', teachingSeriesRoutes)
 app.use('/api/notifications', notificationRoutes)
 app.use('/api/email', emailRoutes)
+app.use('/api/dashboard', dashboardRoutes)
 
 
 connectDB().then(() => {

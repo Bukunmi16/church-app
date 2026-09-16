@@ -6,6 +6,9 @@ const api = axios.create({
   withCredentials: true, // Include credentials (cookies) in requests
 });
 
+console.log(import.meta.env.VITE_API_URL);
+
+
 let refreshPromise = null;
 
 api.interceptors.request.use((config) => {

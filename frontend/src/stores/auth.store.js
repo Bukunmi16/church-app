@@ -16,6 +16,8 @@ const useAuthStore = create((set) => ({
 
   login: async (credentials) => {
     set({ isLoading: true });
+    
+
 
     try {
       const data = await loginUser(credentials);
@@ -26,6 +28,9 @@ const useAuthStore = create((set) => ({
         isAuthenticated: true,
         isLoading: false,
       });  
+
+      console.log(data);
+      
 
       return data;
     } catch (error) {

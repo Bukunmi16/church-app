@@ -35,7 +35,7 @@ const Header = () => {
                     </h1>
                     </h2>
                 </div>
-                        <p className="font-thin font-damion text-[12px] lg:block hidden text-[#D62839]">Home of the blessed people</p>
+                        <p className="font-thin font-fancy text lg:block hidden text-[#D62839]">Home of the blessed people</p>
             </div>
 
             <div className="md:hidden flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-[#D62839]">

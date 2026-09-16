@@ -4,13 +4,47 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useNavigate } from "react-router";
+import useAuthStore from "@/stores/auth.store";
 
 const LoginPage = () => {
-    const [showPassword, setShowPassword] = useState(false);
+    const login = useAuthStore((state) => state.login)
+    const isLoading = useAuthStore((state) => state.isLoading)
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // TODO: wire up real auth
+        
+        try {
+            const data = await login(formData);
+            console.log('Logged In Successfully');
+
+            if (data.user.role === 'admin') {
+                navigate("/admin");
+            } else if (data.user.role === 'worker') {
+                navigate("/worker");
+            } else {
+                navigate("/member");
+            }
+
+        } catch (error) {
+            console.log(error);
+            
+        }
     };
 
     return (
@@ -28,8 +62,8 @@ const LoginPage = () => {
                 <h1 className="font-fancy relative  text-5xl text-[#EDEDEF]">
                     Welcome Back
                 </h1>
-                <p className=" relative mt-3 max-w-sm text-center text-sm text-[#8A8C94]">
-                    Sign in to manage services, teachings, members, and more for Rhema Chapel Ogbomoso.
+                <p className="relative mt-3 max-w-sm text-center text-sm text-[#8A8C94]">
+                    Sign in to Rhema Chapel Ogbomoso's church management portal.
                 </p>
             </div>
 
@@ -40,7 +74,7 @@ const LoginPage = () => {
                     <img
                         src="https://res.cloudinary.com/jkjwwa8p/image/upload/v1789514114/rhema-logo-transparent.png"
                         alt="Rhema Chapel logo"
-                        className="h-25 w-25 object-contain"
+                        className="h-14 w-14 object-contain"
                     />
                     <h1 className="font-fancy mt-3 text-3xl text-[#EDEDEF]">
                         Welcome Back
@@ -51,7 +85,7 @@ const LoginPage = () => {
                     <div className="mb-6 hidden lg:block">
                         <h2 className="text-lg font-semibold text-[#EDEDEF]">Sign in</h2>
                         <p className="mt-1 text-sm text-[#8A8C94]">
-                            Enter your admin credentials to continue.
+                            Enter your credentials to continue.
                         </p>
                     </div>
 
@@ -61,9 +95,12 @@ const LoginPage = () => {
                                 Email
                             </Label>
                             <Input
-                                id="email"
+                                name="email"
                                 type="email"
+                                disabled={isLoading}
                                 placeholder="you@rhemachapel.org"
+                                value={formData.email}
+                                onChange={handleChange}
                                 className="border-[#1C1D22] bg-[#0A0A0C] text-[#EDEDEF] placeholder:text-[#6E7079] focus-visible:ring-[#D62839]"
                                 required
                             />
@@ -83,9 +120,12 @@ const LoginPage = () => {
                             </div>
                             <div className="relative">
                                 <Input
-                                    id="password"
+                                    name="password"
+                                    disabled={isLoading}
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     className="border-[#1C1D22] bg-[#0A0A0C] pr-10 text-[#EDEDEF] placeholder:text-[#6E7079] focus-visible:ring-[#D62839]"
                                     required
                                 />
@@ -101,7 +141,9 @@ const LoginPage = () => {
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <Checkbox id="remember" className="border-[#1C1D22] data-[state=checked]:bg-[#D62839] data-[state=checked]:border-[#D62839]" />
+                            <Checkbox
+                                className="border-[#1C1D22] data-[state=checked]:bg-[#D62839] data-[state=checked]:border-[#D62839]"
+                            />
                             <Label htmlFor="remember" className="text-sm font-normal text-[#8A8C94]">
                                 Remember me
                             </Label>
@@ -109,15 +151,16 @@ const LoginPage = () => {
 
                         <Button
                             type="submit"
+                            disabled={isLoading}
                             className="w-full bg-[#D62839] text-white hover:bg-[#B91F2E]"
                         >
-                            Sign in
+                        {isLoading ? 'Signing In' : 'Sign In'}
                         </Button>
                     </form>
                 </div>
 
                 <p className="mt-6 text-xs text-[#6E7079]">
-                    Rhema Chapel Ogbomoso &middot; Admin Portal
+                    Rhema Chapel Ogbomoso &middot; Church Management Portal
                 </p>
             </div>
         </div>
