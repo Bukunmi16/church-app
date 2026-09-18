@@ -5,7 +5,7 @@ import Department from "../departments/department.model.js";
 import Notification from "../notifications/notification.model.js";
 import Teaching from "../teachings/teaching.model.js";
 
-export const getAdminDashboardData = async () => {
+export const getAdminDashboardData = async (userId) => {
   const now = new Date();
 
   const [
@@ -35,7 +35,7 @@ export const getAdminDashboardData = async () => {
 
     Department.countDocuments(),
 
-    Notification.find()
+    Notification.find({recipient: userId})
       .sort({ createdAt: -1 })
       .limit(5)
       .lean(),
@@ -114,7 +114,7 @@ export const getMemberDashboardData = async (userId) => {
       .sort({ createdAt: -1 })
       .lean(),
 
-    Notification.find({ user: userId })
+    Notification.find({ recipient: userId })
       .sort({ createdAt: -1 })
       .limit(5)
       .lean(),

@@ -51,10 +51,16 @@ const serviceSchema = new mongoose.Schema(
       default: "",
     },
 
+    location: {
+      type: String,
+      trim: true,
+      default: "Behind Lautech College of Health Sciences, Ogbomoso-Ilorin Expressway, Ogbomoso",
+    },
+
     day: {
       type: String,
       required: true,
-      enum: ["Sunday", "Wednesday", "Friday"],
+      enum: ["Sunday", "Wednesday", "Friday", "Saturday"],
     },
 
     date: {

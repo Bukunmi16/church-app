@@ -5,11 +5,14 @@ import {
     Calendar,
     Users,
     User2Icon,
+    UserRoundGroup,
     Bell,
     Settings,
     LogOut,
     ChevronsLeft,
     ChevronsRight,
+    UserRoundGroupIcon,
+    CirclePileIcon,
 } from "lucide-react";
 import { NavLink } from "react-router";
 import useUIStore from "../../stores/ui.store";
@@ -24,7 +27,8 @@ const navigation = [
             { label: "Teachings", path: "/admin/teachings", icon: BookOpen },
             { label: "Events", path: "/admin/events", icon: Calendar },
             { label: "Members", path: "/admin/members", icon: User2Icon },
-            { label: "Departments", path: "/admin/departments", icon: Users },
+            { label: "Workers", path: "/admin/workers", icon: UserRoundGroupIcon},
+            { label: "Departments", path: "/admin/departments", icon: CirclePileIcon },
         ],
     },
     {
@@ -60,7 +64,7 @@ const Sidebar = ({ forceExpanded = false }) => {
 
     return (
         <aside
-            className={`relative flex h-screen flex-col bg-[#0A0A0C] text-[#EDEDEF] transition-all duration-300 ${
+            className={`fixed     flex h-screen flex-col bg-[#0A0A0C] text-[#EDEDEF] transition-all duration-300 ${
                 collapsed ? "w-20" : "w-64"
             }`}
         >
@@ -98,7 +102,7 @@ const Sidebar = ({ forceExpanded = false }) => {
             )}
 
             {/* Navigation */}
-            <nav className="flex-1 space-y-7  px-3 py-6">
+            <nav className="sidebar-scroll flex-1 space-y-7 overflow-y-auto overflow-x-hidden px-3 py-6">
                 {navigation.map((section) => (
                     <div key={section.title}>
                         {!collapsed && (

@@ -6,6 +6,9 @@ import { notifyAllActiveUsers } from "../notifications/notification.service.js";
 
 import { emailAllActiveUsers } from "../email/email.service.js"
 import { emailTemplateCreate, emailTemplateUpdate } from "../../utils/email.js"
+import getPagination from "../../utils/pagination.js";
+import buildFilter from "../../utils/buildFilter.js";
+import { serviceQueryConfig } from "../../config/queryConfig.js";
 
 
 export const createService = async (data, file) => {
@@ -53,10 +56,37 @@ export const createService = async (data, file) => {
     return service
 }
 
-export const getAllServices = async () => {
-    const services = await Service.find().sort({ date: 1, startTime: 1 });
+export const getAllServices = async (query) => {
+    
+    const { page, limit, skip} = getPagination(query)
 
-    return services
+    const {filter, sort} = buildFilter({query, serviceQueryConfig})
+    
+  console.log(filter);
+  
+    const [ services, totalItems] = await Promise.all([
+        Service.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .lean(),
+
+        Service.countDocuments()
+    ]) 
+
+    const totalPages = Math.ceil(totalItems/limit)
+
+    return {
+        services,
+        pagination:{
+            currentPage: page,
+            totalPages,
+            totalItems,
+            limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1 
+        }
+    }
 }
 
 export const getOneService = async (serviceId) => {
@@ -113,7 +143,7 @@ export const updateService = async (serviceId, data, file) => {
     
     await notifyAllActiveUsers({
         title: "Service Updated",
-        message: `${service.name} details has been updated. Check the service details for the latest information`,
+        message: `${service.title} details has been updated. Check the service details for the latest information`,
         type: "service",
         relatedId: service._id,
         relatedModel: "Service",

@@ -2,7 +2,7 @@ import { getAdminDashboardData, getMemberDashboardData, getWorkerDashboardData }
 
 export const getAdminDashboard = async (req, res) => {
     try {
-        const dashboard = await getAdminDashboardData()
+        const dashboard = await getAdminDashboardData(req.user._id)
 
         return res.status(200).json({
             success: true,

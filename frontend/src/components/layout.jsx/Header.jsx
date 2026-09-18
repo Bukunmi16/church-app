@@ -1,17 +1,17 @@
 import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useUIStore from "../../stores/ui.store";
+import useAuthStore from "@/stores/auth.store";
+
 
 // TODO: replace with real auth/user data once wired up
-const currentUser = {
-    name: "Adebayo Johnson",
-    role: "Administrator",
-    profilePicture: null, // e.g. "https://res.cloudinary.com/.../avatar.jpg"
-};
+// console.log(currentUser);
+
 
 const getInitials = (name) => name?.slice(0, 2).toUpperCase() ?? "";
 
 const Header = () => {
+    const currentUser = useAuthStore((state) => state.user)
 
     const toggleSidebar = useUIStore((state) => state.toggleMobileSidebar)
     const expand = useUIStore((state) => !state.desktopSidebarOpen)
