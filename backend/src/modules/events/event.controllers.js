@@ -18,7 +18,7 @@ export const create = async (req, res, next) => {
 
 export const getAll = async (req, res, next) => {
     try {
-        const Events = await getAllEvents()
+        const Events = await getAllEvents(req.query)
 
         res.status(200).json({
         sucess: true,

@@ -8,6 +8,9 @@ import { defaultImages } from '../../config/defaultImages.js'
 import { notifyAllActiveUsers } from '../notifications/notification.service.js'
 import { emailAllActiveUsers } from "../email/email.service.js"
 import { emailTemplateCreate, emailTemplateUpdate } from "../../utils/email.js"
+import getPagination from '../../utils/pagination.js'
+import buildFilter from '../../utils/buildFilter.js'
+import { teachingQueryConfig } from '../../config/queryConfig.js'
 
 export const createTeaching = async (data, userId, file) => {
 
@@ -18,7 +21,7 @@ export const createTeaching = async (data, userId, file) => {
       publicId: null,
     };
 
-    const {title, description, preacher, service, series, videoUrl, audioUrl, department } = data
+    const {title, description, preacher, service, series, videoUrl, audioUrl, department, duration } = data
 
     const departmentExists = await Department.findById(department)
 
@@ -49,6 +52,7 @@ export const createTeaching = async (data, userId, file) => {
         videoUrl: videoUrl, 
         audioUrl: audioUrl, 
         thumbnail: imageData, 
+        duration: duration,
         department: department,
         createdBy: creatorId
     })
@@ -82,10 +86,35 @@ export const createTeaching = async (data, userId, file) => {
     return teaching    
 }
 
-export const getAllTeachings = async () => {
-    const teachings = await Teaching.find()
+export const getAllTeachings = async (query) => {
+  const {page, limit, skip} = getPagination(query)
 
-    return teachings
+  const {filter, sort} = buildFilter({query, ...teachingQueryConfig})
+
+    
+  const [ teachings, totalItems] = await Promise.all([
+        Teaching.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .lean(),
+
+        Teaching.countDocuments()
+    ]) 
+
+    const totalPages = Math.ceil(totalItems/limit)
+
+    return {
+        teachings,
+        pagination:{
+            currentPage: page,
+            totalPages,
+            totalItems,
+            limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1 
+        }
+    }
 }
 
 export const getOneTeaching = async (teachingId) => {
@@ -135,6 +164,7 @@ export const updateTeaching = async (teachingId, data, file) => {
     department,
     videoUrl,
     audioUrl,
+    duration
   } = data;
 
   // Basic fields
@@ -143,6 +173,7 @@ export const updateTeaching = async (teachingId, data, file) => {
   if (preacher !== undefined) teaching.preacher = preacher;
   if (videoUrl !== undefined) teaching.videoUrl = videoUrl;
   if (audioUrl !== undefined) teaching.audioUrl = audioUrl;
+  if (duration !== undefined) teaching.duration = duration;
 
   // Service relationship
   if (service !== undefined) {

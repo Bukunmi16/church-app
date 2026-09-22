@@ -33,7 +33,7 @@ const buildFilter = ({
     };
   }
 
-  console.log(filter);
+//   console.log(filter);
   
 
   return {

@@ -20,6 +20,11 @@ const teachingSchema = new mongoose.Schema(
       trim: true,
     },
 
+    duration: {
+      type: Number,
+      min: 1,
+    },
+    
     service: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Service",

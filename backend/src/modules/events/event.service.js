@@ -7,6 +7,9 @@ import { notifyAllActiveUsers } from "../notifications/notification.service.js";
 
 import { emailAllActiveUsers } from "../email/email.service.js"
 import { emailTemplateCreate, emailTemplateUpdate } from "../../utils/email.js"
+import getPagination from "../../utils/pagination.js";
+import buildFilter from "../../utils/buildFilter.js";
+import { eventQueryConfig } from "../../config/queryConfig.js";
 
 
 export const createEvent = async (data, userId, file) => {
@@ -77,10 +80,35 @@ export const createEvent = async (data, userId, file) => {
     return event
 }
 
-export const getAllEvents = async () => {
-    const events = await Event.find().sort({ startDate: 1 });
+export const getAllEvents = async (query) => {
+  const {page, limit, skip} = getPagination(query)
+
+  const {filter, sort} = buildFilter({query, ...eventQueryConfig})
     
-    return events
+  const [ events, totalItems] = await Promise.all([
+        Event.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .lean(),
+
+        Event.countDocuments()
+    ]) 
+
+    const totalPages = Math.ceil(totalItems/limit)
+
+    return {
+        events,
+        pagination:{
+            currentPage: page,
+            totalPages,
+            totalItems,
+            limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1 
+        }
+    }
+
 }
 
 export const getOneEvent = async (eventId) => {

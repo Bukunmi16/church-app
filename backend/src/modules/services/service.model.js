@@ -21,7 +21,7 @@ const serviceSchema = new mongoose.Schema(
     serviceImage: {
       url: {
         type: String,
-        default: null
+        default: 'https://res.cloudinary.com/jkjwwa8p/image/upload/v1788384142/rhema-logo.jpg'
       },
       publicId: {
         type: String,

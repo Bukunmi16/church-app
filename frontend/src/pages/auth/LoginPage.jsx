@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2, Loader2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -154,7 +154,8 @@ const LoginPage = () => {
                             disabled={isLoading}
                             className="w-full bg-[#D62839] text-white hover:bg-[#B91F2E]"
                         >
-                        {isLoading ? 'Signing In' : 'Sign In'}
+                        {isLoading && <Loader2Icon size={16} className="animate-spin" />}
+                        Log In
                         </Button>
                     </form>
                 </div>

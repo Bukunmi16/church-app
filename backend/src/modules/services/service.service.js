@@ -58,11 +58,11 @@ export const createService = async (data, file) => {
 
 export const getAllServices = async (query) => {
     
+    // console.log('Query:', query);
     const { page, limit, skip} = getPagination(query)
 
-    const {filter, sort} = buildFilter({query, serviceQueryConfig})
+    const {filter, sort} = buildFilter({query, ...serviceQueryConfig})
     
-  console.log(filter);
   
     const [ services, totalItems] = await Promise.all([
         Service.find(filter)

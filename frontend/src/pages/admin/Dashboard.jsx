@@ -85,8 +85,10 @@ const EmptyState = ({ label, to }) => (
         <p className="text-sm text-[#8A8C94]">{label}</p>
         <Button asChild size="sm" className="gap-2 bg-[#D62839] text-white hover:bg-[#B91F2E]">
             <Link to={to}>
-                <PlusCircle size={16} />
-                Create one
+                          <div className='flex justify-between items-center gap-2'>
+                                <PlusCircle size={15} />
+                                  <p>Create One</p>
+                              </div>            
             </Link>
         </Button>
     </div>
