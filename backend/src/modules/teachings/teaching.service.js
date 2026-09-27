@@ -21,44 +21,50 @@ export const createTeaching = async (data, userId, file) => {
       publicId: null,
     };
 
-    const {title, description, preacher, service, series, videoUrl, audioUrl, department, duration } = data
+  const {title, description, preacher, service, series, date, videoUrl, audioUrl, department, duration } = data
 
-    const departmentExists = await Department.findById(department)
+  if (department) {
+    const departmentExists = await Department.findById(department);
 
-    if(!departmentExists) {
-        throw new Error('Department not found')
+  if (!departmentExists) {
+        throw new Error("Department not found");
+      }
     }
-
-    const serviceExists = await Service.findById(service)
-
-    if(!serviceExists) {
-        throw new Error('Service not found')
+    
+    if (service) {
+      const serviceExists = await Service.findById(service);
+    
+      if (!serviceExists) {
+        throw new Error("Service not found");
+      }
     }
-
-    const seriesExists = await TeachingSeries.findById(series)
-
-    if(!seriesExists) {
-        throw new Error('Teaching Series not found')
+    
+    if (series) {
+      const seriesExists = await TeachingSeries.findById(series);
+    
+      if (!seriesExists) {
+        throw new Error("Teaching Series not found");
+      }
     }
-
     const creatorId = userId
 
     const teaching = await Teaching.create({
         title: title, 
         description: description, 
         preacher: preacher, 
-        service: service, 
+        service: service , 
         series: series, 
         videoUrl: videoUrl, 
         audioUrl: audioUrl, 
         thumbnail: imageData, 
         duration: duration,
+        date: date,
         department: department,
         createdBy: creatorId
     })
 
     await teaching.populate([
-      { path: "service", select: "title date day" },
+      { path: "service", select: "title date serviceType day" },
       { path: "series", select: "title month year" },
       { path: "department", select: "name" },
       { path: "createdBy", select: "name role" },
@@ -125,7 +131,7 @@ export const getOneTeaching = async (teachingId) => {
     }
 
     await teaching.populate([
-      { path: "service", select: "title date day" },
+      { path: "service", select: "title date day serviceType" },
       { path: "series", select: "title month year" },
       { path: "department", select: "name" },
       { path: "createdBy", select: "name role" },
@@ -159,25 +165,27 @@ export const updateTeaching = async (teachingId, data, file) => {
     title,
     description,
     preacher,
+    duration,
+    date,
     service,
     series,
     department,
     videoUrl,
     audioUrl,
-    duration
   } = data;
 
   // Basic fields
   if (title !== undefined) teaching.title = title;
   if (description !== undefined) teaching.description = description;
   if (preacher !== undefined) teaching.preacher = preacher;
+  if (duration !== undefined) teaching.duration = duration;
+  if (date !== undefined) teaching.date = date;
   if (videoUrl !== undefined) teaching.videoUrl = videoUrl;
   if (audioUrl !== undefined) teaching.audioUrl = audioUrl;
-  if (duration !== undefined) teaching.duration = duration;
 
   // Service relationship
   if (service !== undefined) {
-    if (service === null) {
+    if (service === '') {
       teaching.service = null;
     } else {
       const existingService = await Service.findById(service);
@@ -192,7 +200,7 @@ export const updateTeaching = async (teachingId, data, file) => {
 
   // Teaching Series relationship
   if (series !== undefined) {
-    if (series === null) {
+    if (series === '') {
       teaching.series = null;
     } else {
       const existingSeries = await TeachingSeries.findById(series);

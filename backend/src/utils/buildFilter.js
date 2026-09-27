@@ -3,10 +3,12 @@ const buildFilter = ({
   searchFields = [],
   filterFields = [],
   sortFields = [],
+  defaultSortField = "createdAt",
 }) => {
   const filter = {};
-  let sort = { createdAt: -1 };
-
+  
+  let sort = {[defaultSortField]: -1,}
+  ;
   // Search
   if (query.search && searchFields.length > 0) {
     filter.$or = searchFields.map((field) => ({

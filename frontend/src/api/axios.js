@@ -1,54 +1,124 @@
+// import axios from "axios";
+// import useAuthStore from "../stores/auth.store";
+
+// const api = axios.create({
+//   baseURL: import.meta.env.VITE_API_URL,
+//   withCredentials: true, // Include credentials (cookies) in requests
+// });
+
+// console.log(import.meta.env.VITE_API_URL);
+
+
+// let refreshPromise = null;
+
+// api.interceptors.request.use((config) => {
+//     const accessToken = useAuthStore.getState().accessToken;
+
+//     if(accessToken) {
+//         config.headers.Authorization = `Bearer ${accessToken}`;
+//     }
+
+//     return config
+// })
+
+// api.interceptors.response.use(
+//     (response) => response,
+//     async (error) => {
+//         const originalRequest = error.config;
+    
+//     if(error.response && error.response.status === 401){
+//         return Promise.reject(error)
+//     }
+
+//     originalRequest._retry = true;
+
+
+//     try {
+//         if (!refreshPromise) {
+//             refreshPromise = useAuthStore.getState().refresh();
+//         }
+
+//         await refreshPromise;
+
+//         return api(originalRequest);
+//     } 
+//     catch (refreshError) {
+//         return Promise.reject(error);
+//     } finally{
+//         refreshPromise = null;
+//     }
+// }
+// )
+
+// export default api;
+
 import axios from "axios";
-import useAuthStore from "../stores/auth.store";
+import useAuthStore from "@/stores/auth.store";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true, // Include credentials (cookies) in requests
+  withCredentials: true,
 });
 
-console.log(import.meta.env.VITE_API_URL);
-
+const refreshApi = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
+});
 
 let refreshPromise = null;
 
 api.interceptors.request.use((config) => {
-    const accessToken = useAuthStore.getState().accessToken;
+  const accessToken = useAuthStore.getState().accessToken;
 
-    if(accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-    }
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
 
-    return config
-})
+  return config;
+});
 
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
-    
-    if(error.response && error.response.status === 401){
-        return Promise.reject(error)
+  (response) => response,
+
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status !== 401 ||
+      originalRequest?._retry
+    ) {
+      return Promise.reject(error);
     }
 
     originalRequest._retry = true;
 
-
     try {
-        if (!refreshPromise) {
-            refreshPromise = useAuthStore.getState().refresh();
-        }
+      if (!refreshPromise) {
+        refreshPromise = refreshApi.post("/auth/refresh");
+      }
 
-        await refreshPromise;
+      const response = await refreshPromise;
 
-        return api(originalRequest);
-    } 
-    catch (refreshError) {
-        return Promise.reject(error);
-    } finally{
-        refreshPromise = null;
+      const newAccessToken = response.data.accessToken;
+
+      useAuthStore.setState({
+        accessToken: newAccessToken,
+        isAuthenticated: true,
+      });
+
+      return api(originalRequest);
+    } catch (refreshError) {
+      useAuthStore.setState({
+        user: null,
+        accessToken: null,
+        isAuthenticated: false,
+      });
+
+      return Promise.reject(refreshError);
+    } finally {
+      refreshPromise = null;
     }
-}
-)
+  }
+);
 
 export default api;
-

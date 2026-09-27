@@ -13,4 +13,11 @@ export const teachingQueryConfig = {
   searchFields: ["title", "preacher"],
   filterFields: ["preacher"],
   sortFields: ["date", "title", "createdAt"],
+  defaultSortField: "date",
 };
+
+export const teachingSeriesQueryConfig = {
+  searchFields: ["title", "month"],
+  filterFields: ["month", "year"],
+  sortFields: ["year", "title", "createdAt"],
+}

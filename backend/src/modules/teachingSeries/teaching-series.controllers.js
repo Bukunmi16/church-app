@@ -17,7 +17,7 @@ export const create = async (req, res, next) => {
 
 export const getAll = async (req, res, next) => {
     try {
-        const series = await getAllTeachingSeries()
+        const series = await getAllTeachingSeries(req.query)
 
         res.status(200).json({
             sucess: true,

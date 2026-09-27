@@ -10,6 +10,7 @@ import {
     Clock,
     Mic2,
     Loader2,
+    Calendar1Icon,
 } from "lucide-react";
 import { getTeachings } from '@/api/teachings.api';
 import LoadingScreen from '@/components/ui/Loading'
@@ -24,31 +25,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-
-
 // ---- Helpers ----
+import { formatDate, formatDuration } from '@/utils';
 
-const formatDate = (dateString) =>
-    new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    }).format(new Date(dateString));
 
-const formatDuration = (minutes) => {
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
 
-  if (hours === 0) {
-    return `${remainingMinutes} min`;
-  }
-
-  if (remainingMinutes === 0) {
-    return `${hours} hr`;
-  }
-
-  return `${hours} hr ${remainingMinutes} min`;
-};
 
 // ---- Small building blocks ----
 
@@ -86,9 +67,6 @@ const TeachingCard = ({ item }) => (
             ) : (
                 <ImageOff size={24} className="text-[#6E7079]" />
             )}
-            <span className="absolute left-3 top-3 rounded-full bg-[#12183A] px-2.5 py-1 text-xs font-medium text-white">
-                {formatDate(item.createdAt)}
-            </span>
         </div>
 
         {/* Body */}
@@ -100,19 +78,21 @@ const TeachingCard = ({ item }) => (
             <div className="space-y-1.5 text-xs text-[#8A8C94]">
                 <div className="flex items-center gap-1.5">
                     <Clock size={13} className="shrink-0" />
-                    <span>
+                    <span className='mt-0.5' >
                         {formatDuration(item.duration)}
                     </span>
                 </div>
                 {item.preacher && (
                     <div className="flex items-center gap-1.5">
                         <Mic2 size={13} className="shrink-0" />
-                        <span className="truncate">{item.preacher}</span>
+                        <span className="truncate mt-0.5">{item.preacher}</span>
                     </div>
                 )}
+                <div className="flex items-center gap-1.5">
+                    <Calendar1Icon size={13} className="shrink-0" />
+                    <span className='mt-0.5'>{formatDate(item.date)}</span>
+                </div>
             </div>
-
-            <TypeBadge type={item.serviceType} />
 
             <Button
                 asChild
@@ -120,25 +100,24 @@ const TeachingCard = ({ item }) => (
                 size="sm"
                 className="mt-auto w-full border-[#1C1D22] bg-transparent text-[#EDEDEF] hover:bg-[#141518] hover:text-[#EDEDEF]"
             >
-                <Link to={`/admin/services/${item._id}`}>Manage</Link>
+                <Link to={`/admin/services/${item._id}`}>Listen</Link>
             </Button>
         </div>
     </div>
 );
 
-const Services = () => {
+const Teaching = () => {
 
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(10)
-    const [serviceType, setServiceType] = useState("")
     const [sortBy, setSortBy] = useState("date")
     const [sortOrder, setSortOrder] = useState("desc")
 
     const [pagination, setPagination] = useState(null)
 
-    const [ service, setService ] = useState(null)
+    const [ teaching, setTeaching ] = useState(null)
     const [ isInitialLoading, setIsInitialLoading ] = useState(true)
     const [ isFetching, setIsFetching ] = useState(true)
     const [ error, setError ] = useState("")
@@ -152,33 +131,33 @@ const Services = () => {
         return () => clearTimeout(timeout)
     }, [search])
 
-    const params = { search: debouncedSearch, page, limit, serviceType, sortBy, sortOrder }
+    const params = { search: debouncedSearch, page, limit, sortBy, sortOrder }
 
     useEffect(() => {
-        const fetchServices = async () => {
+        const fetchTeachings = async () => {
             try {
                 setIsFetching(true)
-                const {data} = await getServices(params)
+                const {data} = await getTeachings(params)
 
-                const {services} = data
-                console.log(services.services);
+                const {teachings} = data
+                console.log(teachings.teachings);
                 
-                setService(services.services)
-                setPagination(services.pagination)
+                setTeaching(teachings.teachings)
+                setPagination(teachings.pagination)
                 setError("")
 
             } catch (error) {
                 console.error(error)
 
-                setError('Failed to load Services')
+                setError('Failed to load Teachings')
             } finally{
                 setIsFetching(false)
                 setIsInitialLoading(false)
             }
         }
 
-        fetchServices()
-    }, [debouncedSearch, page, limit, serviceType, sortBy, sortOrder])
+        fetchTeachings()
+    }, [debouncedSearch, page, limit, sortBy, sortOrder])
 
     // Only block the whole page on the very first load — every filter/page
     // change after that just refetches quietly while existing cards stay visible.
@@ -195,7 +174,7 @@ const Services = () => {
         setPage(1)
     }
 
-    const services = service ?? []
+    const teachings = teaching ?? []
     const totalPages = pagination?.totalPages ?? 1
 
     return (
@@ -207,7 +186,7 @@ const Services = () => {
                     className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#6E7079]"
                 />
                 <Input
-                    placeholder="Search services..."
+                    placeholder="Search teachings..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="border-[#1C1D22] bg-[#111214] pl-9 text-[#EDEDEF] placeholder:text-[#6E7079] focus-visible:ring-[#D62839]"
@@ -215,30 +194,17 @@ const Services = () => {
             </div>
 
             {/* Filter + create — grouped, auto-sized, never stretched */}
-            <div className="flex items-center justify-between gap-3">
-                <Select value={serviceType || "all"} onValueChange={handleTypeChange}>
-                    <SelectTrigger className="w-auto min-w-[11rem]  gap-2 border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">
-                        <SelectValue placeholder="Type" />
-                    </SelectTrigger>
-                    <SelectContent className="border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">
-                        <SelectItem value="all">All types</SelectItem>
-                        {SERVICE_TYPES.map((type) => (
-                            <SelectItem key={type} value={type} className=''>
-                                {type}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-
+            <div className="flex items-center justify-end gap-3">
+  
                 <div className="flex items-center gap-2">
                     {isFetching && (
                         <Loader2 size={16} className="animate-spin text-[#6E7079]" />
                     )}
                     <Button asChild size="sm" className="w-auto gap-1.5 bg-[#D62839] text-white hover:bg-[#B91F2E]">
-                        <Link to="/admin/services/new">
+                        <Link to="/admin/teachings/new">
                           <div className='flex justify-between items-center gap-2'>
                                 <PlusCircle size={15} />
-                                  <p>New Service</p>
+                                  <p>New Teaching</p>
                               </div>
                         </Link>
                     </Button>
@@ -251,8 +217,8 @@ const Services = () => {
                     isFetching ? "opacity-60" : "opacity-100"
                 }`}
             >
-                {services.length > 0 ? (
-                    services.map((item) => (
+                {teachings.length > 0 ? (
+                    teachings.map((item) => (
                       <Link
                       key={item._id}
                       to={item._id}
@@ -262,14 +228,14 @@ const Services = () => {
                     ))
                 ) : (
                     <EmptyState
-                        label="No services match your filters."
-                        to="/admin/services/new"
+                        label="No teachings match your filters."
+                        to="/admin/teachings/new"
                     />
                 )}
             </div>
 
             {/* Pagination */}
-            {services.length > 0 && (
+            {teachings.length > 0 && (
                 <div className="flex items-center justify-between text-sm text-[#8A8C94]">
                     <p>
                         Page {page} of {totalPages}
@@ -300,4 +266,4 @@ const Services = () => {
     )
 }
 
-export default Services
+export default Teaching

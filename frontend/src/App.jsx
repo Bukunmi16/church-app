@@ -32,6 +32,11 @@ import CreateNotification from './pages/notifications/CreateNotification'
 import NotificationDetails from './pages/notifications/NotificationDetails'
 import EditNotification from './pages/notifications/EditNotification'
 import Settings from './pages/Settings'
+import EditTeaching from './pages/teachings/EditTeaching'
+import TeachingSeries from './pages/teaching-series/teachingSeries'
+import CreateTeachingSeries from './pages/teaching-series/CreateTeachingSeries'
+import TeachingSeriesDetails from './pages/teaching-series/TeachingSeriesDetails'
+import EditTeachingSeries from './pages/teaching-series/EditTeachingSeries'
 
 function App() {
 
@@ -62,7 +67,14 @@ function App() {
         <Route index element={<Teaching />} />
         <Route path="new" element={<CreateTeaching />} />
         <Route path=":teachingId" element={<TeachingDetails />} />
-        <Route path=":teachingId/edit" element={<Teaching />} />
+        <Route path=":teachingId/edit" element={<EditTeaching />} />
+        </Route>
+
+        <Route path="teaching-series" >
+        <Route index element={<TeachingSeries />} />
+        <Route path="new" element={<CreateTeachingSeries />} />
+        <Route path=":teachingSeriesId" element={<TeachingSeriesDetails />} />
+        <Route path=":teachingSeriesId/edit" element={<EditTeachingSeries />} />
         </Route>
 
         <Route path="events" >

@@ -24,6 +24,11 @@ const teachingSchema = new mongoose.Schema(
       type: Number,
       min: 1,
     },
+
+    date: {
+      type: Date,
+      required: true
+    },
     
     service: {
       type: mongoose.Schema.Types.ObjectId,

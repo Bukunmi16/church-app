@@ -283,12 +283,12 @@ const ServiceDetails = () => {
                         size="sm"
                         className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
                     >
-                        <Link to={`/admin/teachings/new?service=${serviceId}`}>
+                        {/* <Link to={`/admin/teachings/new?service=${serviceId}`}>
                           <div className='flex justify-between items-center gap-2'>
                             <PlusCircle size={14} />
                             <p>Add teaching</p>
                               </div>
-                        </Link>
+                        </Link> */}
                     </Button>
                 </div>
 

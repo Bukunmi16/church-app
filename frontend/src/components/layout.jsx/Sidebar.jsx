@@ -13,6 +13,7 @@ import {
     ChevronsRight,
     UserRoundGroupIcon,
     CirclePileIcon,
+    Rows4Icon,
 } from "lucide-react";
 import { NavLink } from "react-router";
 import useUIStore from "../../stores/ui.store";
@@ -25,6 +26,7 @@ const navigation = [
             { label: "Dashboard", path: "/admin", icon: LayoutDashboard, end:true },
             { label: "Services", path: "/admin/services", icon: CalendarDays },
             { label: "Teachings", path: "/admin/teachings", icon: BookOpen },
+            { label: "Teaching Series", path: "/admin/teaching-series", icon: Rows4Icon },
             { label: "Events", path: "/admin/events", icon: Calendar },
             { label: "Members", path: "/admin/members", icon: User2Icon },
             { label: "Workers", path: "/admin/workers", icon: UserRoundGroupIcon},

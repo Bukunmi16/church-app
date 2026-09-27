@@ -5,6 +5,9 @@ import { emailTemplateCreate } from "../../utils/email.js"
 
 import Teaching from "../teachings/teaching.model.js"
 import TeachingSeries from "./teaching-series.model.js"
+import getPagination from "../../utils/pagination.js"
+import buildFilter from "../../utils/buildFilter.js"
+import { teachingSeriesQueryConfig } from "../../config/queryConfig.js"
 
 
 export const createTeachingSeries = async (data, userId) => {
@@ -42,10 +45,35 @@ export const createTeachingSeries = async (data, userId) => {
     return series 
 }
 
-export const getAllTeachingSeries = async () => {
-    const series = await TeachingSeries.find()
+export const getAllTeachingSeries = async (query) => {
+  const {page, limit, skip} = getPagination(query)
 
-    return series
+  const {filter, sort} = buildFilter({query, ...teachingSeriesQueryConfig})
+
+    
+  const [ teachingSeries, totalItems] = await Promise.all([
+        TeachingSeries.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .lean(),
+
+        TeachingSeries.countDocuments()
+    ]) 
+
+    const totalPages = Math.ceil(totalItems/limit)
+
+    return {
+        teachingSeries,
+        pagination:{
+            currentPage: page,
+            totalPages,
+            totalItems,
+            limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1 
+        }
+    }
 }
 
 export const getOneTeachingSeries = async (seriesId) => {

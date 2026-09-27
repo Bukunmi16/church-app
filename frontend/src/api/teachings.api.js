@@ -3,19 +3,19 @@ import api from "./axios";
 export const getTeachings = (params = {}) => {
     const response = api.get('/teachings', {params})
 
-    return response.data
+    return response
 } 
 
 export const getOneTeaching = (id) => {
     const response = api.get(`/teachings/${id}`)
 
-    return response.data
+    return response
 }
 
 export const createTeaching = (data) => {
     const response = api.post(`/teachings`, data)
 
-    return response.data
+    return response
 }
 
 export const updateTeaching = (id, data) => {

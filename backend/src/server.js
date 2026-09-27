@@ -27,6 +27,11 @@ app.use(cors({
         origin: "http://localhost:5173",
         credentials: true,
     }))
+app.use((req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
