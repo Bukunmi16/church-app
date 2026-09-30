@@ -18,6 +18,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { getOneService, updateService } from '@/api/services.api';
+import { formatDateForInput, formatTimeForInput } from '@/utils';
 
 const SERVICE_TYPES = [
     "Teaching",
@@ -76,9 +77,9 @@ const EditService = () => {
                     initialFormData.preacher = service.preacher
                     initialFormData.serviceType = service.serviceType
                     initialFormData.day = service.day
-                    initialFormData.date = service.date
-                    initialFormData.startTime = service.startTime
-                    initialFormData.endTime = service.endTime
+                    initialFormData.date = formatDateForInput(service.date)
+                    initialFormData.startTime = formatTimeForInput(service.startTime)
+                    initialFormData.endTime = formatTimeForInput(service.endTime)
                     initialFormData.location = service.location
                     initialFormData.description = service.description
                     setPreviewUrl(service.serviceImage.url)

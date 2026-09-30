@@ -1,9 +1,18 @@
 import React from 'react'
+import { useNavigate } from "react-router";
+import { createEvent } from '@/api/events.api'
+import EventForm from './EventForm'
 
 const CreateEvent = () => {
-  return (
-    <div>CreateEvent</div>
-  )
-}
+    const navigate = useNavigate();
 
-export default CreateEvent
+    const handleCreate = async (payload) => {
+        const data = await createEvent(payload);
+        const created = data.event?.event ?? data.event;
+        navigate(`/admin/events/${created._id}`);
+    };
+
+    return <EventForm mode="create" onSubmit={handleCreate} />;
+};
+
+export default CreateEvent;

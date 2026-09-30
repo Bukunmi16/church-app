@@ -29,7 +29,7 @@ import {
 
 // ---- Helpers ----
 
-import { formatDate } from '@/utils';
+import { formatDate, formatTime } from '@/utils';
 
 const startOfDay = (date) => {
     const d = new Date(date);
@@ -57,9 +57,13 @@ const StatusCapsule = ({ status }) => {
 
 const EventDetails = () => {
     const { eventId } = useParams();
+    console.log(eventId);
+    
     const navigate = useNavigate();
 
     const [event, setEvent] = useState(null);
+    console.log(event);
+    
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
@@ -67,8 +71,10 @@ const EventDetails = () => {
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                const data = await getOneEvent(eventId);
-                setEvent(data.event?.event ?? data.event);
+                const {data} = await getOneEvent(eventId);
+                console.log(data.event);
+                
+                setEvent(data.event);
             } catch (err) {
                 console.error(err);
                 setError("Failed to load this event");
@@ -117,8 +123,10 @@ const EventDetails = () => {
                     className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
                 >
                     <Link to="/admin/events">
-                        <ArrowLeft size={16} />
-                        Back to events
+                          <div className='flex justify-between items-center gap-2'>
+                            <ArrowLeft size={16} />
+                                  <p>Back to Events</p>
+                            </div>                    
                     </Link>
                 </Button>
 
@@ -130,8 +138,10 @@ const EventDetails = () => {
                         className="gap-1.5 border-[#1C1D22] bg-transparent text-[#EDEDEF] hover:bg-[#141518] hover:text-[#EDEDEF]"
                     >
                         <Link to={`/admin/events/${eventId}/edit`}>
+                          <div className='flex justify-between items-center gap-2'>
                             <Pencil size={14} />
-                            Edit
+                                  <p>Edit</p>
+                              </div>
                         </Link>
                     </Button>
 
@@ -174,8 +184,8 @@ const EventDetails = () => {
             </div>
 
             {/* Overview: image and details as separate panels */}
-            <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2">
-                <div className="relative flex h-64 w-full items-center justify-center overflow-hidden rounded-xl border border-[#1C1D22] bg-[#0A0A0C] lg:h-auto">
+            <div className="grid  grid-cols-1 items-stretch gap-6 lg:grid-cols-2">
+                <div className="relative flex  w-full items-center justify-center overflow-hidden rounded-xl border border-[#1C1D22] bg-[#0A0A0C] lg:h-auto">
                     {event.image?.url ? (
                         <img src={event.image.url} alt={event.title} className="h-full w-full object-cover" />
                     ) : (
@@ -184,7 +194,7 @@ const EventDetails = () => {
                     <StatusCapsule status={status} />
                 </div>
 
-                <div className="space-y-4 rounded-xl border border-[#1C1D22] bg-[#111214] p-6">
+                <div className="space-y-4 h-fit  rounded-xl border border-[#1C1D22] bg-[#111214] p-6">
                     <h1 className="text-xl font-semibold text-[#EDEDEF]">{event.title}</h1>
 
                     <div className="flex flex-wrap items-center gap-4 text-sm text-[#8A8C94]">
@@ -195,7 +205,7 @@ const EventDetails = () => {
                                     ? formatDate(event.startDate)
                                     : `${formatDate(event.startDate)} – ${formatDate(event.endDate)}`}
                                 {" · "}
-                                {event.startTime} – {event.endTime}
+                                {formatTime(event.startTime)} – {formatTime(event.endTime)}
                             </span>
                         </div>
                         {event.location && (

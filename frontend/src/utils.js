@@ -12,7 +12,7 @@ export const formatDateForInput = (dateString) => {
 
 export const formatDate = (dateString) => {
   if (!dateString) {
-    return "—";
+    return "";
   }
 
   const date = new Date(dateString);
@@ -48,4 +48,58 @@ export const formatDuration = (minutes) => {
   }
 
   return `${hours} hr ${remainingMinutes} min`;
+};
+
+export const formatTimeForInput = (time) => {
+  if(!time) return ""
+  return time.slice(0, 50) 
+} 
+
+export const formatTime = (time) => {
+  if (!time) return "—";
+
+  const [hours, minutes] = time.split(":").map(Number);
+
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return "—";
+
+  const period = hours >= 12 ? "pm" : "am";
+  const formattedHours = hours % 12 || 12;
+
+  return `${formattedHours}:${String(minutes).padStart(2, "0")}${period}`;
+};
+
+const startOfDay = (date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+};
+
+export const getEventStatus = (event) => {
+    const now = startOfDay(new Date());
+    const start = startOfDay(event.startDate);
+    const end = startOfDay(event.endDate);
+    if (start <= now && now <= end) return "today";
+    if (start > now) return "upcoming";
+    return "past";
+};
+
+const startOfServiceDay = (date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+};
+
+export const getServiceStatus = (service) => {
+  const now = startOfServiceDay(new Date());
+  const start = startOfServiceDay(service.date);
+
+  if (start.getTime() === now.getTime()) {
+    return "today";
+  }
+
+  if (start > now) {
+    return "upcoming";
+  }
+
+  return service.day;
 };

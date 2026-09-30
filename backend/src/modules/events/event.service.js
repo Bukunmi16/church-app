@@ -136,7 +136,6 @@ export const updateEvent = async (eventId, data, file) => {
     }
 
     const guests = (guestMinisters ?? "")
-      .split(",")
       .map(name => name.trim())
       .filter(name => name.length > 0); // removes empty strings from trailing commas etc.
 

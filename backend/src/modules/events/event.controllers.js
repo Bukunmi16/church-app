@@ -32,12 +32,12 @@ export const getAll = async (req, res, next) => {
 
 export const getOne = async (req, res, next) => {
     try {
-        const Event = await getOneEvent(req.params.id)
+        const event = await getOneEvent(req.params.id)
         
         res.status(200).json({
         sucess: true,
         message: "Event Fetched Successfully",
-        Event
+        event
         })    
     } catch (error) {
         next(error)
@@ -46,12 +46,12 @@ export const getOne = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
     try {
-        const Event = await updateEvent(req.params.id, req.body, req.file)
+        const event = await updateEvent(req.params.id, req.body, req.file)
         
         res.status(200).json({
         sucess: true,
         message: "Event Updated Successfully",
-        Event
+        event
         })
     } catch (error) {
         next(error)
@@ -60,12 +60,12 @@ export const update = async (req, res, next) => {
 
 export const deleteEvent = async (req, res, next) => {
     try {
-        const Event = await removeEvent(req.params.id)
+        const event = await removeEvent(req.params.id)
 
         res.status(200).json({
         sucess: true,
         message: "Event Deleted Successfully",
-        Event
+        event
         })      
     } catch (error) {
         next(error)

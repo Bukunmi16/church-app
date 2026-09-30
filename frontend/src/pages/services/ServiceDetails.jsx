@@ -28,6 +28,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { formatTime } from '@/utils'
 
 // ---- Helpers ----
 
@@ -248,8 +249,8 @@ const ServiceDetails = () => {
                         <div className="flex items-center gap-1.5">
                             <Clock size={15} className="shrink-0" />
                             <span>
-                                {formatDate(service.date)} &middot; {service.startTime} –{" "}
-                                {service.endTime}
+                                {formatDate(service.date)} &middot; {formatTime(service.startTime)} –{" "}
+                                {formatTime(service.endTime)}
                             </span>
                         </div>
                         {service.preacher && (

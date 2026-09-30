@@ -23,6 +23,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { formatTime, getServiceStatus } from '@/utils';
 
 
 const SERVICE_TYPES = [
@@ -69,7 +70,23 @@ const TypeBadge = ({ type }) => (
     </span>
 );
 
-const ServiceCard = ({ item }) => (
+const StatusCapsule = ({ status }) => {
+    return (
+        status === 'today' || status === 'upcoming' ? 
+        <span className="absolute font-bold right-3 top-3 rounded-full bg-[#D62839] px-2.5 py-1 text-xs  text-white">
+           {status.toUpperCase()}
+        </span> 
+        : 
+        <span className="absolute right-3 top-3 rounded-full bg-[#12183A] px-2.5 py-1 text-xs font-medium text-white">
+            {status}
+        </span> 
+    );
+};
+
+
+const ServiceCard = ({ item }) => {
+    const status = getServiceStatus(item)
+return(
     <div className="flex flex-col overflow-hidden rounded-xl border border-[#1C1D22] bg-[#111214] transition-colors hover:border-[#2A2B31]">
         {/* Image */}
         <div className="relative flex h-[90%] w-full items-center justify-center bg-[#0A0A0C]">
@@ -82,17 +99,9 @@ const ServiceCard = ({ item }) => (
             ) : (
                 <ImageOff size={24} className="text-[#6E7079]" />
             )}
-            <span className="absolute left-3 top-3 rounded-full bg-[#12183A] px-2.5 py-1 text-xs font-medium text-white">
-                {item.day}
-            </span>
-            {new Date(item.date) > new Date() &&
-            <span className="absolute right-3 top-3 rounded-full bg-[#D62839] px-2.5 py-1 text-xs font-medium text-white">
-            Upcoming
-            </span>}
-            {new Date(item.date) === new Date() &&
-            <span className="absolute right-3 top-3 rounded-full bg-[#D62839] px-2.5 py-1 text-xs font-medium text-white">
-            Today
-            </span>}
+
+            <StatusCapsule status={status}/>
+
             
         </div>
 
@@ -107,7 +116,7 @@ const ServiceCard = ({ item }) => (
                 <div className="flex items-center gap-1.5">
                     <Clock size={13} className="shrink-0" />
                     <span>
-                        {formatDate(item.date)} &middot; {item.startTime} – {item.endTime}
+                        {formatDate(item.date)} &middot; {formatTime(item.startTime)} – {formatTime(item.endTime)}
                     </span>
                 </div>
                 {item.preacher && (
@@ -130,7 +139,7 @@ const ServiceCard = ({ item }) => (
             </Button>
         </div>
     </div>
-);
+)};
 
 const Services = () => {
 
@@ -167,7 +176,6 @@ const Services = () => {
                 const {data} = await getServices(params)
 
                 const {services} = data
-                console.log(services.services);
                 
                 setService(services.services)
                 setPagination(services.pagination)

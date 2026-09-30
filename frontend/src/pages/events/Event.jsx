@@ -15,34 +15,15 @@ import LoadingScreen from '@/components/ui/Loading'
 import ErrorPage from '../errors/ErrorPage'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { formatTime, formatDate, getEventStatus } from '@/utils';
 
 // ---- Helpers ----
 
-// const getImageUrl = (image) => (typeof image === "string" ? image : image?.url) || null;
 
-const formatDate = (dateString) =>
-    new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    }).format(new Date(dateString));
-
-const startOfDay = (date) => {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    return d;
-};
 
 // Correctly compares calendar days, not Date object references
 // (the original `new Date(x) === new Date(y)` check was always false)
-const getEventStatus = (event) => {
-    const now = startOfDay(new Date());
-    const start = startOfDay(event.startDate);
-    const end = startOfDay(event.endDate);
-    if (start <= now && now <= end) return "today";
-    if (start > now) return "upcoming";
-    return "past";
-};
+
 
 // ---- Small building blocks ----
 
@@ -70,7 +51,6 @@ const StatusCapsule = ({ status }) => {
 };
 
 const EventCard = ({ item }) => {
-    // const imageUrl = getImageUrl(item.image);
     const status = getEventStatus(item);
 
     return (
@@ -96,7 +76,7 @@ const EventCard = ({ item }) => {
                     <div className="flex items-center gap-1.5">
                         <Clock size={13} className="shrink-0" />
                         <span>
-                            {formatDate(item.startDate)} &middot; {item.startTime} – {item.endTime}
+                            {formatDate(item.startDate)} &middot; {formatTime(item.startTime)} – {formatTime(item.endTime)}
                         </span>
                     </div>
                     {item.location && (
