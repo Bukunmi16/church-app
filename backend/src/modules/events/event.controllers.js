@@ -18,12 +18,12 @@ export const create = async (req, res, next) => {
 
 export const getAll = async (req, res, next) => {
     try {
-        const Events = await getAllEvents(req.query)
+        const events = await getAllEvents(req.query)
 
         res.status(200).json({
         sucess: true,
         message: "All Events Fetched Successfully",
-        Events
+        events
         })
     } catch (error) {
         next(error)

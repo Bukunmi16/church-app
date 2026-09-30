@@ -7,17 +7,19 @@ export const serviceQueryConfig = {
 export const eventQueryConfig = {
   searchFields: ["title", "preacher"],
   sortFields: ["date", "title", "createdAt"],
+  defaultSort: "startDate",
 };
 
 export const teachingQueryConfig = {
   searchFields: ["title", "preacher"],
   filterFields: ["preacher"],
   sortFields: ["date", "title", "createdAt"],
-  defaultSortField: "date",
+  defaultSort: "date",
 };
 
 export const teachingSeriesQueryConfig = {
-  searchFields: ["title", "month"],
+  searchFields: ["title"],
   filterFields: ["month", "year"],
   sortFields: ["year", "title", "createdAt"],
+  defaultSort: "date" 
 }

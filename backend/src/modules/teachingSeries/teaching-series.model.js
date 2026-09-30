@@ -14,6 +14,17 @@ const TeachingSeriesSchema = new mongoose.Schema(
       default: "",
     },
 
+    thumbnail: {
+      url: {
+        type: String,
+        default: 'https://res.cloudinary.com/jkjwwa8p/image/upload/v1788384142/rhema-logo.jpg'
+      },
+      publicId: {
+        type: String,
+        default: null
+      }
+    },
+
     month: {
       type: Number,
       required: true,
@@ -24,6 +35,11 @@ const TeachingSeriesSchema = new mongoose.Schema(
     year: {
       type: Number,
       required: true,
+    },
+
+    date: {
+      type: Date,
+      required: true
     },
 
     createdBy: {

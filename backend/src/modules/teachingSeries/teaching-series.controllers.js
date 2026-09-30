@@ -2,7 +2,7 @@ import { createTeachingSeries, getAllTeachingSeries, getOneTeachingSeries, remov
 
 export const create = async (req, res, next) => {
     try {
-        const teachingSeries = await createTeachingSeries(req.body, req.user.id)
+        const teachingSeries = await createTeachingSeries(req.body, req.user.id, req.file)
 
         res.status(200).json({
             sucess: true,
@@ -47,7 +47,7 @@ export const getOne = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
     try {
-        const series = await updateTeachingSeries(req.params.id)
+        const series = await updateTeachingSeries(req.params.id, req.body, req.file)
 
         res.status(200).json({
             sucess: true,

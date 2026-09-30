@@ -3,12 +3,10 @@ const buildFilter = ({
   searchFields = [],
   filterFields = [],
   sortFields = [],
-  defaultSortField = "createdAt",
+  defaultSort = "createdAt",
 }) => {
   const filter = {};
-  
-  let sort = {[defaultSortField]: -1,}
-  ;
+
   // Search
   if (query.search && searchFields.length > 0) {
     filter.$or = searchFields.map((field) => ({
@@ -27,16 +25,15 @@ const buildFilter = ({
   });
 
   // Sorting
-  if (query.sortBy && sortFields.includes(query.sortBy)) {
-    const sortOrder = query.sortOrder === "asc" ? 1 : -1;
+  const sortField = query.sortBy || defaultSort;
+  const sortOrder = query.sortOrder === "asc" ? 1 : -1;
 
-    sort = {
-      [query.sortBy]: sortOrder,
-    };
-  }
+  const sort = {
+    [sortField]: sortOrder,
+  };
 
-//   console.log(filter);
-  
+  console.log(sort);
+    
 
   return {
     filter,

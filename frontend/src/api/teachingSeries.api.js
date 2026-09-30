@@ -19,14 +19,14 @@ export const createTeachingSeries = (data) => {
     return response
 }
 
-export const updateTeaching = (id, data) => {
+export const updateTeachingSeries = (id, data) => {
     const response = api.post(`/teaching-series/${id}`, data)
 
-    return response.data
+    return response
 }
 
-export const deleteTeaching = (id) => {
+export const deleteTeachingSeries = (id) => {
     const response = api.delete(`/teaching-series/${id}`)
 
-    return response.data
+    return response
 }

@@ -52,7 +52,7 @@ export const createTeaching = async (data, userId, file) => {
         title: title, 
         description: description, 
         preacher: preacher, 
-        service: service , 
+        service: service, 
         series: series, 
         videoUrl: videoUrl, 
         audioUrl: audioUrl, 

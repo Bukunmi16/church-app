@@ -111,7 +111,7 @@ const Teaching = () => {
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
     const [page, setPage] = useState(1)
-    const [limit, setLimit] = useState(10)
+    const [limit, setLimit] = useState(12)
     const [sortBy, setSortBy] = useState("date")
     const [sortOrder, setSortOrder] = useState("desc")
 
