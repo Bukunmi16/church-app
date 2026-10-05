@@ -212,6 +212,7 @@ const Services = () => {
     const services = service ?? []
     const totalPages = pagination?.totalPages ?? 1
 
+    
     return (
         <div className="space-y-4">
             {/* Search — own row, full width */}
@@ -231,7 +232,7 @@ const Services = () => {
             {/* Filter + create — grouped, auto-sized, never stretched */}
             <div className="flex items-center justify-between gap-3">
                 <Select value={serviceType || "all"} onValueChange={handleTypeChange}>
-                    <SelectTrigger className="w-auto min-w-[11rem]  gap-2 border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">
+                    <SelectTrigger className="  min-w-[7rem] sm:min-w-[11rem]  gap-2 border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">
                         <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent className="border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">
@@ -252,7 +253,7 @@ const Services = () => {
                         <Link to="/admin/services/new">
                           <div className='flex justify-between items-center gap-2'>
                                 <PlusCircle size={15} />
-                                  <p>New Service</p>
+                            <span className='hidden sm:block'>New Service</span>
                               </div>
                         </Link>
                     </Button>
@@ -283,7 +284,7 @@ const Services = () => {
             </div>
 
             {/* Pagination */}
-            {services.length > 0 && (
+            {services.length > 0 && search.length === 0 &&  (
                 <div className="flex items-center justify-between text-sm text-[#8A8C94]">
                     <p>
                         Page {page} of {totalPages}

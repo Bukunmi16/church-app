@@ -103,3 +103,19 @@ export const getServiceStatus = (service) => {
 
   return service.day;
 };
+
+export const formatDateTime = (dateString) => {
+  if (!dateString) return "—";
+
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) return "—";
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+};

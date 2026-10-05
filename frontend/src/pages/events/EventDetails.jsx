@@ -122,10 +122,9 @@ const EventDetails = () => {
                     size="sm"
                     className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
                 >
-                    <Link to="/admin/events">
+                    <Link to={-1}>
                           <div className='flex justify-between items-center gap-2'>
                             <ArrowLeft size={16} />
-                                  <p>Back to Events</p>
                             </div>                    
                     </Link>
                 </Button>
@@ -140,7 +139,7 @@ const EventDetails = () => {
                         <Link to={`/admin/events/${eventId}/edit`}>
                           <div className='flex justify-between items-center gap-2'>
                             <Pencil size={14} />
-                                  <p>Edit</p>
+                        <span className='hidden sm:block'>Edit</span>
                               </div>
                         </Link>
                     </Button>
@@ -154,7 +153,8 @@ const EventDetails = () => {
                             >
                               
                                 <Trash2 size={14} />
-                                Delete
+                        <span className='hidden sm:block'>Delete</span>
+
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">

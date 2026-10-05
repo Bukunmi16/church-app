@@ -8,7 +8,8 @@ const CreateTeachingSeries = () => {
 
     const handleCreate = async (payload) => {
         const {data} = await createTeachingSeries(payload);
-        navigate(`/admin/teaching-series/${data.series._id}`);
+        
+        navigate(`/admin/teaching-series/${data.teachingSeries._id}`);
     };
 
     return <SeriesForm mode="create" onSubmit={handleCreate} />;

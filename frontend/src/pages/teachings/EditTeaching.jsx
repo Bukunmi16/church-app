@@ -16,9 +16,7 @@ const EditTeaching = () => {
     useEffect(() => {
         const fetchTeaching = async () => {
             try {
-                const data = await getOneTeaching(teachingId);
-                console.log(data.data.teaching);
-                
+                const data = await getOneTeaching(teachingId);                
                 setTeaching(data.data.teaching);
             } catch (err) {
                 console.error(err);

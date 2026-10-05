@@ -30,8 +30,10 @@ const EmptyState = ({ label, to }) => (
         <p className="text-sm text-[#8A8C94]">{label}</p>
         <Button asChild size="sm" className="gap-2 bg-[#D62839] text-white hover:bg-[#B91F2E]">
             <Link to={to}>
+                <div className='flex justify-between items-center gap-2'>
                 <PlusCircle size={16} />
-                Create a series
+                <span>Create a Series</span>
+                </div>
             </Link>
         </Button>
     </div>
@@ -99,7 +101,7 @@ const TeachingSeries = () => {
     const [debouncedSearch, setDebouncedSearch] = useState("")
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(12)
-    const [sortOrder, setSortOrder] = useState("asc")
+    const [sortOrder, setSortOrder] = useState("des")
 
     const [pagination, setPagination] = useState(null)
     const [series, setSeries] = useState(null)
@@ -188,10 +190,7 @@ const TeachingSeries = () => {
                         <Link to="/admin/teaching-series/new">
                                 <div className='flex justify-between items-center gap-2'>
                                   <PlusCircle size={15} />
-                                    <p>
-                                        New Series
-                                    </p>
-                                </div>
+                        <span className='hidden sm:block'>New Series</span>                                </div>
                         </Link>
                     </Button>
                 </div>
@@ -219,7 +218,7 @@ const TeachingSeries = () => {
             </div>
 
             {/* Pagination */}
-            {items.length > 0 && (
+            {items.length > 0 && search.length === 0 &&  (
                 <div className="flex items-center justify-between text-sm text-[#8A8C94]">
                     <p>Page {page} of {totalPages}</p>
                     <div className="flex items-center gap-2">

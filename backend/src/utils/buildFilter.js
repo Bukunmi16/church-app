@@ -5,7 +5,8 @@ const buildFilter = ({
   sortFields = [],
   defaultSort = "createdAt",
 }) => {
-  const filter = {};
+  // console.log(query)
+  let filter = {};
 
   // Search
   if (query.search && searchFields.length > 0) {
@@ -24,6 +25,9 @@ const buildFilter = ({
     }
   });
 
+  console.log('BUILD FILTER CHECK', filter);
+  
+
   // Sorting
   const sortField = query.sortBy || defaultSort;
   const sortOrder = query.sortOrder === "asc" ? 1 : -1;
@@ -32,7 +36,7 @@ const buildFilter = ({
     [sortField]: sortOrder,
   };
 
-  console.log(sort);
+  // console.log(sort);
     
 
   return {

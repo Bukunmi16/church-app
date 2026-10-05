@@ -1,47 +1,41 @@
 import bcrypt from "bcryptjs";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudinary.js";
 import User from "./user.model.js";
+import getPagination from "../../utils/pagination.js";
+import buildFilter from "../../utils/buildFilter.js";
+import { userQueryConfig } from "../../config/queryConfig.js";
 
 
-export const getUsers = async (page = 1, limit = 20, search, role, isActive) => {
-  const skip = (page - 1) * limit;
+export const getUsers = async (query) => {
+    const {page, limit, skip} = getPagination(query)
 
-  const filter = {}
+    const { filter, sort } = buildFilter({
+      query,
+      ...userQueryConfig,
+    });    
 
-  if(search){
-    filter.$or =[
-        {name: {$regex: search, $options: "i"}},
-        {email: {$regex: search, $options: "i"}},
-        {phone: {$regex: search, $options: "i"}},
-    ]
-  }
-
-  if(role){
-    filter.role = role
-  }
-
-  if(isActive !== undefined){
-    filter.isActive = isActive
-  }
-
-  const [users, total] = await Promise.all([
+  const [users, totalItems] = await Promise.all([
     User.find(filter)
       .select("-password -refreshToken")
-      .sort({ createdAt: -1 })
+      .sort(sort)
       .skip(skip)
       .limit(limit),
 
     User.countDocuments(filter),
   ]);
 
+    const totalPages = Math.ceil(totalItems / limit);
+
 
   return {
     users,
     pagination: {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
+        currentPage: page,
+        totalPages,
+        totalItems,
+        limit,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
     },
   };
 };

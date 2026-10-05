@@ -8,7 +8,6 @@ import useAuthStore from './stores/auth.store'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import LoginPage from './pages/auth/LoginPage'
 import WorkerDashboard from './pages/worker/WorkerDashboard'
-import MemberDashboard from './pages/member/MemberDashboard'
 import RoleRoute from './components/auth/RoleRoute'
 import Unauthorized from './pages/errors/Unauthorized'
 import ServiceDetails from './pages/services/ServiceDetails'
@@ -25,12 +24,10 @@ import Department from './pages/departments/Department'
 import CreateDepartment from './pages/departments/CreateDepartment'
 import DepartmentDetails from './pages/departments/DepartmentDetails'
 import EditDepartment from './pages/departments/EditDepartment'
-import MemberDetails from './pages/member/MemberDetails'
-import ViewMembers from './pages/member/ViewMembers'
+import UserDetails from './pages/users/UserDetails'
+import ViewUsers from './pages/users/ViewUsers'
 import Notifications from './pages/notifications/Notifications'
-import CreateNotification from './pages/notifications/CreateNotification'
 import NotificationDetails from './pages/notifications/NotificationDetails'
-import EditNotification from './pages/notifications/EditNotification'
 import Settings from './pages/Settings'
 import EditTeaching from './pages/teachings/EditTeaching'
 import TeachingSeries from './pages/teaching-series/TeachingSeries'
@@ -91,17 +88,14 @@ function App() {
         <Route path=":departmentId/edit" element={<EditDepartment />} />
         </Route>
 
-        <Route path="members" >
-        <Route index element={<ViewMembers />} />
-        <Route path=":memberId" element={<MemberDetails />} />
-        <Route path=":memberId/edit" element={<MemberDetails />} />
+        <Route path="users" >
+        <Route index element={<ViewUsers />} />
+        <Route path=":userId" element={<UserDetails />} />
         </Route>
 
         <Route path="notifications" >
         <Route index element={<Notifications />} />
-        <Route path="new" element={<CreateNotification />} />
-        <Route path=":teachingId" element={<NotificationDetails />} />
-        <Route path=":teachingId/edit" element={<EditNotification />} />
+        <Route path=":notificationId" element={<NotificationDetails />} />
         </Route>
 
         <Route path="settings" element={<Settings/>} />
@@ -110,7 +104,6 @@ function App() {
       </Route>
 
       <Route path="/worker" element={<WorkerDashboard/>}></Route>
-      <Route path="/member" element={<MemberDashboard/>}></Route>
       </Route>
     </Routes>
   )

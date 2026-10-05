@@ -1,5 +1,8 @@
 import Notification from "./notification.model.js";
 import User from "../user/user.model.js";
+import buildFilter from "../../utils/buildFilter.js";
+import getPagination from "../../utils/pagination.js";
+import { notificationQueryConfig } from "../../config/queryConfig.js";
 
 export const createNotification = async (data) => {
     const {recipient, title, message, type, relatedId, relatedModel} = data 
@@ -11,8 +14,44 @@ export const createNotification = async (data) => {
     return notification
 }
 
-export const getUserNotifications = async (userId) => {
-    const notifications = await Notification.find({recipient: userId}).sort({createdAt: -1})
+export const getUserNotifications = async (query, userId) => {
+    const {page, limit, skip} = getPagination(query)
+    
+    const {filter, sort} = buildFilter({query, ...notificationQueryConfig})
+
+    const notificationFilter = {
+        recipient: userId,
+        ...filter
+    }
+
+    const [ notifications, totalItems] = await Promise.all([
+     Notification.find(notificationFilter)
+        .skip(skip)  
+        .limit(limit)
+        .sort(sort)
+        .lean(),
+
+        Notification.countDocuments(notificationFilter)
+    ]) 
+
+    const totalPages = Math.ceil(totalItems/limit)
+
+
+    return {
+        notifications,
+        pagination:{
+            currentPage: page,
+            totalPages,
+            totalItems,
+            limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1 
+        }
+    }
+}
+
+export const getOneNotification = async (notificationId, userId) => {
+    const notifications = await Notification.findOne({recipient: userId, _id: notificationId})
 
     return notifications
 }
@@ -61,6 +100,17 @@ export const deleteNotification = async (notificationId, userId) => {
     await Notification.findByIdAndDelete(notificationId)
 
     return notification
+}
+
+export const deleteManyNotifications = async (notificationIds, userId) => {
+    const result = await Notification.deleteMany({
+        _id: { $in: notificationIds },
+        recipient: userId,
+    })
+
+    return {
+        deletedCount: result.deletedCount,
+    }
 }
 
 export const notifyAllActiveUsers = async ({ title, message, type, relatedId = null, relatedModel = null}) => {

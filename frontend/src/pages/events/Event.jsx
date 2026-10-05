@@ -185,7 +185,8 @@ const Event = () => {
                     <Link to="/admin/events/new">
                       <div className='flex justify-between items-center gap-2'>
                         <PlusCircle size={15} />
-                            <p>New Event</p>
+                        <span className='hidden sm:block'>New Event</span>
+                            
                           </div>
                     </Link>
                 </Button>
@@ -212,7 +213,7 @@ const Event = () => {
             </div>
 
             {/* Pagination */}
-            {items.length > 0 && (
+            {items.length > 0 && search.length === 0 && (
                 <div className="flex items-center justify-between text-sm text-[#8A8C94]">
                     <p>Page {page} of {totalPages}</p>
                     <div className="flex items-center gap-2">

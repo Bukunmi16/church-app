@@ -2,6 +2,8 @@ import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useUIStore from "../../stores/ui.store";
 import useAuthStore from "@/stores/auth.store";
+import { Link } from "react-router";
+import { useNotificationStore } from "@/stores/notifications.store";
 
 
 // TODO: replace with real auth/user data once wired up
@@ -12,7 +14,7 @@ const getInitials = (name) => name?.slice(0, 2).toUpperCase() ?? "";
 
 const Header = () => {
     const currentUser = useAuthStore((state) => state.user)
-
+    const unreadCount = useNotificationStore((state) => state.unreadCount)    
     const toggleSidebar = useUIStore((state) => state.toggleMobileSidebar)
     const expand = useUIStore((state) => !state.desktopSidebarOpen)
 
@@ -35,7 +37,7 @@ const Header = () => {
                     </h1>
                     </h2>
                 </div>
-                        <p className="font-thin font-fancy text lg:block hidden text-[#D62839]">Home of the blessed people</p>
+                        {/* <p className="font-thin font-fancy text lg:block hidden text-[#D62839]">Home of the blessed people</p> */}
             </div>
 
             <div className="md:hidden flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-[#D62839]">
@@ -48,14 +50,18 @@ const Header = () => {
 
             {/* Right side */}
             <div className="flex items-center gap-2">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="relative text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
-                >
+                <Link to="/admin/notifications">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="relative text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
+                    >
                     <Bell size={20} />
-                    <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#D62839]" />
+                      {unreadCount > 0 && (
+                        <span className="absolute right-2.5 top-2 flex h-1.5 w-1.5   items-center justify-center rounded-full bg-red-500 text-white"/>                        
+                      )}                    
                 </Button>
+                </Link>
 
                 {/* Divider between actions and profile */}
                 <span className="mx-1 h-6 w-px bg-[#1C1D22]" />

@@ -123,10 +123,10 @@ const EventForm = ({ mode = "create", initialData = null, onSubmit, backTo = "/a
                 size="sm"
                 className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
             >
-                <Link to={backTo}>
+                <Link to={-1}>
                    <div className='flex justify-between items-center gap-2'>
                     <ArrowLeft size={16} />
-                    <p>Back to Events</p>
+                    <p>Back</p>
                     </div>
                 </Link>
             </Button>
@@ -342,7 +342,7 @@ const EventForm = ({ mode = "create", initialData = null, onSubmit, backTo = "/a
                         variant="outline"
                         className="border-[#1C1D22] bg-transparent text-[#EDEDEF] hover:bg-[#141518] hover:text-[#EDEDEF]"
                     >
-                        <Link to={backTo}>Cancel</Link>
+                        <Link to={-1}>Cancel</Link>
                     </Button>
                     <Button
                         type="submit"

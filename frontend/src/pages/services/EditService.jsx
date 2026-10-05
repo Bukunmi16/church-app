@@ -149,11 +149,8 @@ const EditService = () => {
                 size="sm"
                 className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
             >
-                <Link to="/admin/services">
-                    <div className='flex justify-between items-center gap-2'>
+                <Link to={-1} >
                 <ArrowLeft size={16} />
-                <p>Back to services</p>
-                </div>
                 </Link>
             </Button>
 

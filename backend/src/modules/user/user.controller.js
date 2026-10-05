@@ -2,17 +2,11 @@ import { getUsers, findUserById, updateUserRole, updateUserDetails, toggleStatus
 
 export const getAllUsers = async (req, res, next) => {
     try {
-        const page = Number(req.query.page) || 1
-        const limit = Number(req.query.limit) || 20
-        
-        const {search, role} = req.query
-        let {isActive} = req.query
-        
-        const result = await getUsers(page,limit, search, role, isActive)
+        const users = await getUsers(req.query)
 
         res.json({
             success: true,
-            ...result
+            users
         })
     } catch (error) {
     next(error)       
@@ -35,8 +29,10 @@ export const getOneUser = async (req, res, next) => {
 
 export const changeUserRole = async (req, res, next) => {
     try {
+        console.log(req.body);
         
         const {role} = req.body
+        // console.log(role);
 
         const user = await updateUserRole(req.params.id, role, req.user._id.toString())
         // console.log(user);/

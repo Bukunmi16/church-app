@@ -13,7 +13,7 @@ router.use(authMiddleware)
 router.post('/', upload.single("image"), authorize("admin"), create)
 router.get('/', authorize("admin"), getAll)
 router.get('/:id',authorize("admin"), getOne)
-router.patch('/:id', upload.single("image"), authorize("admin"), update)
+router.post('/:id', upload.single("image"), authorize("admin"), update)
 router.delete('/:id', authorize("admin"), deleteDepartment)
 
 // Relationships

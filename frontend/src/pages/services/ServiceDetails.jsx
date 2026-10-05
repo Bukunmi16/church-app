@@ -152,12 +152,9 @@ const ServiceDetails = () => {
                     size="sm"
                     className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
                 >
-                    <Link to={'/admin/services'}>
-                          <div className='flex justify-between items-center gap-2'>
-                        <ArrowLeft size={16} />
-                        <p>Back to services</p>
-                              </div>                    
-                    </Link>
+                <Link to={-1} >
+                <ArrowLeft size={16} />
+                </Link>
                 </Button>
 
                 <div className="flex items-center gap-2">
@@ -169,7 +166,7 @@ const ServiceDetails = () => {
                         // TODO: wire up the real edit flow
                         >
                         <Pencil size={14} />
-                        Edit
+                        <span className='hidden sm:block'>Edit</span>
                     </Button>
                         </Link>
 
@@ -181,7 +178,7 @@ const ServiceDetails = () => {
                                 className="gap-1.5 border-[#1C1D22] bg-transparent text-[#D62839] hover:bg-[#D62839]/10 hover:text-[#D62839]"
                             >
                                 <Trash2 size={14} />
-                                Delete
+                                <span className='hidden sm:block'>Delete</span>     
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">
@@ -312,7 +309,7 @@ const ServiceDetails = () => {
                             <Link to={`/admin/teachings/new?service=${serviceId}`}>
                           <div className='flex justify-between items-center gap-2'>
                                 <PlusCircle size={16} />
-                                  <p>Add a teaching</p>
+                                  <p>Add a Teaching</p>
                               </div>
                             </Link>
                         </Button>

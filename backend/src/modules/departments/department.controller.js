@@ -1,4 +1,4 @@
-import { createDepartment, getAllDepartments, getDepartmentById, updateDepartment, makeLeader, makeWorker, makeAssistant, deleteAssistant, deleteWorker } from "./department.service.js"
+import { createDepartment, getAllDepartments, getDepartmentById, updateDepartment, makeLeader, makeWorker, makeAssistant, deleteAssistant, deleteWorker, removeDepartment } from "./department.service.js"
 
 export const create = async (req, res, next) => {
     try {
@@ -59,7 +59,7 @@ export const update = async (req, res, next) => {
 
 export const deleteDepartment = async (req, res, next) => {
     try {
-        const department = await removerDepartment(req.params.id)
+        const department = await removeDepartment(req.params.id)
         
         res.status(200).json({
             success: true,

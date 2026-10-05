@@ -243,7 +243,7 @@ const initialFormData = {
  * onSubmit: async (formDataPayload) => void  — caller decides createTeaching vs updateTeaching
  * backTo: where "Back" / "Cancel" should navigate
  */
-const TeachingForm = ({ mode = "create", initialData = null, onSubmit, backTo = "/admin/teachings" }) => {
+const TeachingForm = ({ mode = "create", initialData = null, onSubmit }) => {
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
@@ -370,11 +370,8 @@ const TeachingForm = ({ mode = "create", initialData = null, onSubmit, backTo = 
                 size="sm"
                 className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
             >
-                <Link to={backTo}>
-                  <div className='flex justify-between items-center gap-2'>
+                <Link to={-1}>
                     <ArrowLeft size={16} />
-                    <p>Back to Teachings</p>
-                        </div>
                 </Link>
             </Button>
 
@@ -573,7 +570,7 @@ const TeachingForm = ({ mode = "create", initialData = null, onSubmit, backTo = 
                         variant="outline"
                         className="border-[#1C1D22] bg-transparent text-[#EDEDEF] hover:bg-[#141518] hover:text-[#EDEDEF]"
                     >
-                        <Link to={backTo}>Cancel</Link>
+                        <Link to={-1}>Cancel</Link>
                     </Button>
                     <Button
                         type="submit"

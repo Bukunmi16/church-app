@@ -78,7 +78,7 @@ export const updateDepartment = async (departmentId, data, file) => {
     return department
 }
 
-export const removerDepartment = async (departmentId) => {
+export const removeDepartment = async (departmentId) => {
     const department = await Department.findById(departmentId)
     if(!department){
         throw new Error('Department does not exist')
@@ -101,6 +101,8 @@ export const makeLeader = async (userId, departmentId) => {
     if(!department) {
         throw new Error('Department not found')
     }
+
+    if(userId !== null){
 
     const user = await User.findById(userId)
 
@@ -126,6 +128,7 @@ export const makeLeader = async (userId, departmentId) => {
     if(isAssistant){
         department.assistants.pull(userId)
     }
+}
         
     department.leader = userId
     await department.save()

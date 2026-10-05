@@ -1,5 +1,4 @@
 import Department from "../modules/departments/department.model.js"
-import User from "../modules/user/user.model.js"
 
 const authorizeDepartmentLeader = async (req, res, next) => {
         
@@ -13,7 +12,8 @@ const authorizeDepartmentLeader = async (req, res, next) => {
         }
         
         const userId = req.user._id.toString() 
-
+        console.log(req.user.role);
+        
         if(department.leader.toString() === userId || req.user.role === 'admin') {
             next()
         } else{

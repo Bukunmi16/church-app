@@ -33,9 +33,13 @@ export const createTeachingSeries = async (data, userId, file) => {
         createdBy: creatorId
     })
 
+    const monthsArray = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+
+    const monthName = monthsArray[month - 1]; // Adjust for zero-based index  
+    
     await notifyAllActiveUsers({
-        title: `${series.month} Teaching Series`,
-        message: `New Monthly Series! Check out the series for more details`,
+        title: `${monthName}, ${year} Teaching Series`,
+        message: `New Monthly Series! ${description}`,
         type: "teachingSeries",
         relatedId: series._id,
         relatedModel: "TeachingSeries",

@@ -37,7 +37,7 @@ export const createService = async (data, file) => {
 
     await notifyAllActiveUsers({
         title: "New Service",
-        message: `${service.title} has been added to the Church's calender`,
+        message: `${service.title} has been added to the Church's calender. ${service.description}`,
         type: "service",
         relatedId: service._id, 
         relatedModel: "Service"

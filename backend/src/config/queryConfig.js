@@ -23,3 +23,17 @@ export const teachingSeriesQueryConfig = {
   sortFields: ["year", "title", "createdAt"],
   defaultSort: "date" 
 }
+
+export const userQueryConfig = {
+  searchFields: ["name", "email"],
+  filterFields: ["role"],
+  sortFields: ["createdAt"],
+  defaultSort: "createdAt" 
+}
+
+export const notificationQueryConfig = {
+  searchFields: ["title", "message"],
+  filterFields: ["isRead"],
+  sortFields: ["createdAt"],
+  defaultSort: "createdAt" 
+}

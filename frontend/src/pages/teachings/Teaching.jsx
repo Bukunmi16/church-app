@@ -204,7 +204,7 @@ const Teaching = () => {
                         <Link to="/admin/teachings/new">
                           <div className='flex justify-between items-center gap-2'>
                                 <PlusCircle size={15} />
-                                  <p>New Teaching</p>
+                        <span className='hidden sm:block'>New Teaching</span>
                               </div>
                         </Link>
                     </Button>
@@ -235,7 +235,7 @@ const Teaching = () => {
             </div>
 
             {/* Pagination */}
-            {teachings.length > 0 && (
+            {teachings.length > 0 && search.length === 0 && (
                 <div className="flex items-center justify-between text-sm text-[#8A8C94]">
                     <p>
                         Page {page} of {totalPages}

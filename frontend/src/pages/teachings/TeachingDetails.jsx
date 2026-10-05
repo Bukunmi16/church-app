@@ -161,11 +161,8 @@ const TeachingDetails = () => {
                     size="sm"
                     className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
                 >
-                    <Link to="/admin/teachings">
-                      <div className='flex justify-between items-center gap-2'>
+                    <Link to={-1}>
                       <ArrowLeft size={16} />
-                      <p>Back to Teachings</p>
-                              </div>
                     </Link>
                 </Button>
 
@@ -177,7 +174,7 @@ const TeachingDetails = () => {
                         className="gap-1.5 border-[#1C1D22] bg-transparent text-[#EDEDEF] hover:bg-[#141518] hover:text-[#EDEDEF]"
                         >
                         <Pencil size={14} />
-                        Edit
+                        <span className='hidden sm:block'>Edit</span>
                     </Button>
                       </Link>
 
@@ -189,7 +186,7 @@ const TeachingDetails = () => {
                                 className="gap-1.5 border-[#1C1D22] bg-transparent text-[#D62839] hover:bg-[#D62839]/10 hover:text-[#D62839]"
                             >
                                 <Trash2 size={14} />
-                                Delete
+                        <span className='hidden sm:block'>Delete</span>
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">

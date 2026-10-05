@@ -59,7 +59,7 @@ export const createEvent = async (data, userId, file) => {
 
     await notifyAllActiveUsers({
         title: "New Event",
-        message: `${event.title} has been added to the Church calender`,
+        message: `${title} has been added to the Church calender. ${description}`,
         type: "event",
         relatedId: event._id, 
         relatedModel: "Event"
@@ -80,10 +80,10 @@ export const createEvent = async (data, userId, file) => {
     return event
 }
 
-export const getAllEvents = async (query) => {
-  const {page, limit, skip} = getPagination(query)
+    export const getAllEvents = async (query) => {
+    const {page, limit, skip} = getPagination(query)
 
-  const {filter, sort} = buildFilter({query, ...eventQueryConfig})
+    const {filter, sort} = buildFilter({query, ...eventQueryConfig})
     
   const [ events, totalItems] = await Promise.all([
         Event.find(filter)
@@ -173,7 +173,7 @@ export const updateEvent = async (eventId, data, file) => {
 
     await notifyAllActiveUsers({
         title: "Event Updated",
-        message: `${event.name} details has been updated. Check the event details for the latest information`,
+        message: `${title} details has been updated. ${description} <br/> Check the event details for the latest information`,
         type: "event",
         relatedId: event._id,
         relatedModel: "Event",
