@@ -10,7 +10,10 @@ export const create = async (req, res, next) => {
             department 
         })
     } catch (error) {
-    next(error)    
+    return res.status(400).json({
+        success: false,
+        message: error.message
+    })
 }    
 }
 
@@ -24,7 +27,10 @@ export const getAll = async (req, res, next) => {
         })
         
     } catch (error) {
-    next(error)        
+    return res.status(400).json({
+        success: false,
+        message: error.message
+    });        
     }
 }
 
@@ -38,8 +44,11 @@ export const getOne = async (req, res, next) => {
         })
 
     } catch (error) {
-    next(error)        
-}
+        return res.status(400).json({
+        success: false,
+        message: error.message
+    });
+    }
 }
 
 export const update = async (req, res, next) => {
@@ -53,7 +62,10 @@ export const update = async (req, res, next) => {
         })        
         
     } catch (error) {
-    next(error)            
+    return res.status(400).json({
+        success: false,
+        message: error.message
+    });
 }
 }
 
@@ -67,7 +79,10 @@ export const deleteDepartment = async (req, res, next) => {
             department
         })        
     } catch (error) {
-    next(error)    
+    return res.status(400).json({
+        success: false,
+        message: error.message
+    });
     }
 }
 
@@ -82,9 +97,13 @@ export const assignLeader = async (req, res, next) => {
             department
         })
     } catch (error) {
-        next(error)       
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
     }
 }
+
 
 export const assignWorker = async (req, res, next) => {
     try {
@@ -97,7 +116,10 @@ export const assignWorker = async (req, res, next) => {
             department
         })
     } catch (error) {
-        next(error)       
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
     }
 }
 
@@ -112,9 +134,13 @@ export const assignAssistant = async (req, res, next) => {
             department
         })
     } catch (error) {
-        next(error)       
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
     }
 }
+
 
 export const removeWorker = async (req, res, next) => {
     try {
@@ -126,7 +152,10 @@ export const removeWorker = async (req, res, next) => {
             department
         })
     } catch (error) {
-        next(error)       
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
     }
 }
 
@@ -140,6 +169,9 @@ export const removeAssistant = async (req, res, next) => {
             department
         })
     } catch (error) {
-        next(error)       
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
     }
 }

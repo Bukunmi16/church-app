@@ -173,7 +173,7 @@ export const updateEvent = async (eventId, data, file) => {
 
     await notifyAllActiveUsers({
         title: "Event Updated",
-        message: `${title} details has been updated. ${description} <br/> Check the event details for the latest information`,
+        message: `${title} details has been updated. ${description} Check the event details for the latest information`,
         type: "event",
         relatedId: event._id,
         relatedModel: "Event",

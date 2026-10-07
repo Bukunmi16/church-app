@@ -14,7 +14,8 @@ const getInitials = (name) => name?.slice(0, 2).toUpperCase() ?? "";
 
 const Header = () => {
     const currentUser = useAuthStore((state) => state.user)
-    const unreadCount = useNotificationStore((state) => state.unreadCount)    
+    const unreadCount = useNotificationStore((state) => state.unreadCount) 
+    console.log(unreadCount)   
     const toggleSidebar = useUIStore((state) => state.toggleMobileSidebar)
     const expand = useUIStore((state) => !state.desktopSidebarOpen)
 

@@ -4,8 +4,11 @@ import { getOneTeachingSeries, updateTeachingSeries } from '@/api/teachingSeries
 import LoadingScreen from '@/components/ui/Loading'
 import ErrorPage from '../errors/ErrorPage'
 import SeriesForm from './SeriesForm'
+import { toast } from 'sonner';
+import { useNotificationStore } from '@/stores/notifications.store';
 
 const EditTeachingSeries = () => {
+    const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
     const { seriesId } = useParams();
     const navigate = useNavigate();
 
@@ -14,6 +17,7 @@ const EditTeachingSeries = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        fetchUnreadNotifications();
         const fetchSeries = async () => {
             try {
                 const {data} = await getOneTeachingSeries(seriesId);
@@ -26,7 +30,7 @@ const EditTeachingSeries = () => {
             }
         };
         fetchSeries();
-    }, [seriesId]);
+    }, [seriesId, fetchUnreadNotifications]);
 
     if (isLoading) {
         return <LoadingScreen />;
@@ -41,8 +45,29 @@ const EditTeachingSeries = () => {
     }
 
     const handleUpdate = async (payload) => {
-        await updateTeachingSeries(seriesId, payload);
-        navigate(`/admin/teaching-series/${seriesId}`);
+        try {
+            await updateTeachingSeries(seriesId, payload);
+            navigate(`/admin/teaching-series/${seriesId}`);
+         toast.success('Teaching Series Updated', {
+                description: `${series.title} has been updated successfully.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                }
+            });
+        } catch (error) {
+            toast.error('Failed to Update Teaching Series', {
+                description: `Failed to update teaching series. Please try again.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                }
+            });
+        }
     };
 
     return (

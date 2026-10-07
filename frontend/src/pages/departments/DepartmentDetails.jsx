@@ -44,6 +44,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from 'sonner';
 
 // ---- Helpers ----
 
@@ -71,10 +72,11 @@ const UserAvatar = ({ user, size = 9 }) => (
 );
 
 const UserRow = ({ user, onRemove, isRemoving }) => (
-<Link to={`/admin/users/${user._id}`}>
     <div className="flex items-center justify-between gap-3 rounded-lg border border-[#1C1D22] bg-[#0A0A0C] px-3 py-2">
         <div className="flex min-w-0 items-center gap-2.5">
+<Link to={`/admin/users/${user._id}`}>
             <UserAvatar user={user} size={8} />
+</Link>
             <div className="min-w-0">
                 <p className="truncate text-sm text-[#EDEDEF]">{user.name}</p>
                 <p className="truncate text-xs text-[#6E7079]">{user.email}</p>
@@ -92,7 +94,6 @@ const UserRow = ({ user, onRemove, isRemoving }) => (
             </button>
         )}
     </div>
-</Link>
 );
 
 // Debounced typeahead search for adding a user to a role.
@@ -356,22 +357,74 @@ const DepartmentDetails = () => {
             setIsDeleting(true);
             await deleteDepartment(departmentId);
             navigate("/admin/departments");
+            toast.success('Department Deleted', {
+                description: 'The department has been deleted successfully.',
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                },
+            });
         } catch (err) {
             console.error(err);
             setIsDeleting(false);
             setError("Failed to delete this department. Please try again.");
+            toast.error('Failed to Delete Department', {
+                description: 'Failed to delete this department. Please try again.',
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                },
+            });
         }
     };
 
     const handleAssignLeader = async (userId) => {
         try {
             setIsSavingLeader(true);
-            await assignLeader(departmentId, userId);
+            if(userId === null) {
+                await assignLeader(departmentId, null);
+                await fetchDepartment();
+                setLeaderDialogOpen(false);
+                toast.success('Leader Removed', {
+                    description: 'The department leader has been removed.',
+                    position: 'top-center',
+                    style: {
+                        background: "#202124",
+                        color: "#f5f5f5",
+                        border: "1px solid #008000",
+                    },
+                });
+            } else {
+                const {data} = await assignLeader(departmentId, userId);
+                const newLeaderName = data.department.leader?.name;
+
             await fetchDepartment();
             setLeaderDialogOpen(false);
+            toast.success('New Leader Assigned', {
+                description: `${newLeaderName} is now the ${department.name} department leader.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                },
+            });
+        }
         } catch (err) {
             console.error(err);
-            setError("Failed to update the department leader. Please try again.");
+            toast.error('Failed to Update Leader', {
+                description: 'Failed to update the department leader. Please try again.',
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                },
+            });
         } finally {
             setIsSavingLeader(false);
         }
@@ -381,10 +434,29 @@ const DepartmentDetails = () => {
         try {
             await assignAssistant(departmentId, user._id);
             setDepartment((prev) => ({ ...prev, assistants: [...(prev.assistants ?? []), user] }));
-        } catch (err) {
-            console.error(err);
+            toast.success('Assistant Added', {
+                description: `${user.name} has been added as an assistant to the ${department.name} department leadership.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                },
+            });
+        } catch (error) {
+            console.error(error);
+            console.log('ERROR', error.response.data.message);
+            
             // Likely a 403 if the current admin isn't this department's leader
-            setError("Failed to add assistant. You may need to be this department's leader to do that.");
+            toast.error('Failed to Add Assistant', {
+                description: `${error.response?.data?.message}` || 'Failed to add assistant. You may need to be this department\'s leader to do that.',
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                },
+            });
         }
     };
 
@@ -395,9 +467,26 @@ const DepartmentDetails = () => {
                 ...prev,
                 assistants: (prev.assistants ?? []).filter((u) => u._id !== userId),
             }));
-        } catch (err) {
-            console.error(err);
-            setError("Failed to remove assistant. You may need to be this department's leader to do that.");
+            toast.success('Assistant Removed', {
+                description: 'The assistant has been removed successfully.',
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                },
+            });
+        } catch (error) {
+            console.log('ERROR MESSAGE', error.response?.data?.message);
+            toast.error('Failed to Remove Assistant', {
+                description: error.response?.data?.message || 'Failed to remove assistant. You may need to be this department\'s leader to do that.',
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                },
+            });
         }
     };
 
@@ -405,9 +494,26 @@ const DepartmentDetails = () => {
         try {
             await assignWorker(departmentId, user._id);
             setDepartment((prev) => ({ ...prev, workers: [...(prev.workers ?? []), user] }));
+            toast.success('Worker Added', {
+                description: `${user.name} has been added as a worker in the ${department.name} department.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                },
+            });
         } catch (err) {
             console.error(err);
-            setError("Failed to add worker. Please try again.");
+            toast.error('Failed to Add Worker', {
+                description: err.response?.data?.message || 'Failed to add worker. Please try again.',
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                },
+            });
         }
     };
 
@@ -420,7 +526,15 @@ const DepartmentDetails = () => {
             }));
         } catch (err) {
             console.error(err);
-            setError("Failed to remove worker. Please try again.");
+            toast.error('Failed to Remove Worker', {
+                description: 'Failed to remove worker. Please try again.',
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                },
+            });
         }
     };
 
@@ -451,7 +565,6 @@ const DepartmentDetails = () => {
                 >
                     <Link to="/admin/departments">
                         <ArrowLeft size={16} />
-                        Back to departments
                     </Link>
                 </Button>
 
@@ -463,8 +576,10 @@ const DepartmentDetails = () => {
                         className="gap-1.5 border-[#1C1D22] bg-transparent text-[#EDEDEF] hover:bg-[#141518] hover:text-[#EDEDEF]"
                     >
                         <Link to={`/admin/departments/${departmentId}/edit`}>
+                            <div className="flex items-center gap-1.5">
                             <Pencil size={14} />
-                            Edit
+                            <span className='hidden sm:block' >Edit</span>
+                            </div>
                         </Link>
                     </Button>
 

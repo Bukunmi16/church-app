@@ -18,6 +18,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useNotificationStore } from '@/stores/notifications.store';
+import { toast } from 'sonner';
 
 const SERVICE_TYPES = [
     "Teaching",
@@ -50,6 +52,8 @@ const initialFormData = {
 };
 
 const CreateService = () => {
+    const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
+    
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
@@ -96,13 +100,35 @@ const CreateService = () => {
                 payload.append("serviceImage", imageFile);
             }
 
-            const data = await createService(payload);
+            const {data} = await createService(payload);
             console.log(data);
+
+            toast.success('Service Created', {
+                description: `${data.service.title} has been created successfully.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                }
+            });
+
+            fetchUnreadNotifications(); // Update global unread count in the store
+
             
             navigate(-1);
         } catch (err) {
             console.error(err);
             setError("Failed to create service. Please check the form and try again.");
+            toast.error('Failed to Create Service', {
+                description: `Failed to create service. Please try again.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                }
+            });
             setIsSubmitting(false);
         }
     };

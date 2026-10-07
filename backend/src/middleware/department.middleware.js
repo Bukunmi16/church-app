@@ -14,7 +14,7 @@ const authorizeDepartmentLeader = async (req, res, next) => {
         const userId = req.user._id.toString() 
         console.log(req.user.role);
         
-        if(department.leader.toString() === userId || req.user.role === 'admin') {
+        if(department.leader === userId || req.user.role === 'admin') {
             next()
         } else{
             return res.status(403).json({

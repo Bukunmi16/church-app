@@ -9,7 +9,7 @@ export const getServices = async (params = {}) => {
 export const getOneService = async (id) => {
     const response = await api.get(`/services/${id}`)
 
-    return response.data
+    return response
 }
 
 export const createService = async (data) => {

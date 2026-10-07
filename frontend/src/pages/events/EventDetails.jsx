@@ -30,6 +30,8 @@ import {
 // ---- Helpers ----
 
 import { formatDate, formatTime } from '@/utils';
+import { toast } from 'sonner';
+import { useNotificationStore } from '@/stores/notifications.store';
 
 const startOfDay = (date) => {
     const d = new Date(date);
@@ -56,13 +58,12 @@ const StatusCapsule = ({ status }) => {
 };
 
 const EventDetails = () => {
+    const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
     const { eventId } = useParams();
-    console.log(eventId);
     
     const navigate = useNavigate();
 
     const [event, setEvent] = useState(null);
-    console.log(event);
     
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
@@ -77,23 +78,49 @@ const EventDetails = () => {
                 setEvent(data.event);
             } catch (err) {
                 console.error(err);
-                setError("Failed to load this event");
+                toast.error('Failed to Load Event', {
+                    description: `Failed to load event. Please try again.`,
+                    position: 'top-center',
+                    style: {
+                        background: "#202124",
+                        color: "#f5f5f5",
+                        border: "1px solid #FF0000",
+                    }
+                });
             } finally {
                 setIsLoading(false);
             }
         };
         fetchEvent();
-    }, [eventId]);
+        fetchUnreadNotifications(); // Update global unread count in the store
+    }, [eventId, fetchUnreadNotifications]);
 
     const handleDelete = async () => {
         try {
             setIsDeleting(true);
             await deleteEvent(eventId);
+            toast.success('Event Deleted', {
+                description: `${event.title} has been deleted successfully.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                }
+              });
             navigate("/admin/events");
         } catch (err) {
-            console.error(err);
+            // console.error(err);
             setIsDeleting(false);
-            setError("Failed to delete this event. Please try again.");
+            toast.error('Failed to Delete Event', {
+                description: `Failed to delete event. Please try again.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                }
+            });
         }
     };
 

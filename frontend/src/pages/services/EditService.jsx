@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/select";
 import { getOneService, updateService } from '@/api/services.api';
 import { formatDateForInput, formatTimeForInput } from '@/utils';
+import { toast } from 'sonner';
+import { useNotificationStore } from '@/stores/notifications.store';
 
 const SERVICE_TYPES = [
     "Teaching",
@@ -62,11 +64,13 @@ const EditService = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
+    const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
+
     
         useEffect(() => {
             const fetchService = async () => {
                 try {
-                    const data = await getOneService(serviceId)
+                    const {data} = await getOneService(serviceId)
                     const service = data.service.service
 
                     console.log(service);
@@ -89,7 +93,8 @@ const EditService = () => {
                 } 
             }
             fetchService()
-        }, [serviceId])
+            fetchUnreadNotifications()
+        }, [serviceId, fetchUnreadNotifications]);
 
 
     const handleChange = (e) => {
@@ -129,13 +134,31 @@ const EditService = () => {
                 payload.append("serviceImage", imageFile);
             }
 
-            const data = await updateService(serviceId, payload);
-            console.log(data);
-            
+            const {data} = await updateService(serviceId, payload);
+
+            toast.success('Service Updated', {
+                description: `${data.service.title} has been updated.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                }
+            });
+
             navigate(-1);
         } catch (err) {
             console.error(err);
             setError("Failed to create service. Please check the form and try again.");
+            toast.error('Failed to Update Service', {
+                description: `Failed to update service. Please try again.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                }
+            });
             setIsSubmitting(false);
         }
     };

@@ -29,6 +29,8 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { formatTime } from '@/utils'
+import { useNotificationStore } from '@/stores/notifications.store'
+import { toast } from 'sonner'
 
 // ---- Helpers ----
 
@@ -89,6 +91,7 @@ const TeachingCard = ({ teaching }) => (
 );
 
 const ServiceDetails = () => {
+    const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
 
     const { serviceId } = useParams()
     const navigate = useNavigate()
@@ -102,7 +105,7 @@ const ServiceDetails = () => {
     useEffect(() => {
         const fetchService = async () => {
             try {
-                const data = await getOneService(serviceId)
+                const {data} = await getOneService(serviceId)
 
                 setService(data.service.service)
                 setRelatedTeaching(data.service.teachings)
@@ -114,15 +117,33 @@ const ServiceDetails = () => {
             }
         }
         fetchService()
-    }, [serviceId])
+        fetchUnreadNotifications();
+    }, [serviceId, fetchUnreadNotifications]);
 
     const handleDelete = async () => {
         try {
             setIsDeleting(true)
             await deleteService(serviceId)
+            toast.success(`You Deleted a Service`, {
+                description: `${service.title} has been deleted.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                    }});
             navigate("/admin/services")
         } catch (err) {
             console.error(err)
+            toast.error('Failed to Delete Service', {  
+                description: `Failed to delete service. Please try again.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                }
+            });
             setIsDeleting(false)
             setError("Failed to delete this service. Please try again.")
         }

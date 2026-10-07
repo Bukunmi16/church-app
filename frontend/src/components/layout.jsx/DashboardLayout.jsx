@@ -13,6 +13,7 @@ const DashboardLayout = () => {
 
     useEffect(() => {
       fetchUnreadNotifications();
+      console.log('Rerender')
     }, [fetchUnreadNotifications]);
 
     return (

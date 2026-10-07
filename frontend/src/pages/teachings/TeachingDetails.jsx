@@ -27,6 +27,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useNotificationStore } from '@/stores/notifications.store';
+import { toast } from 'sonner';
 
 // ---- Inline brand icons (lucide dropped brand/logo icons in v1) ----
 
@@ -102,6 +104,7 @@ const RelatedCard = ({ to, icon, label, title, subtitle }) => (
 );
 
 const TeachingDetails = () => {
+    const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
 
     const { teachingId } = useParams();
     const navigate = useNavigate();
@@ -110,12 +113,13 @@ const TeachingDetails = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
-
+    
+    
     useEffect(() => {
         const fetchTeaching = async () => {
             try {
                 const {data} = await getOneTeaching(teachingId);
-                console.log(data)
+                // console.log(data)
                 setTeaching(data.teaching);
             } catch (err) {
                 console.error(err);
@@ -125,15 +129,34 @@ const TeachingDetails = () => {
             }
         };
         fetchTeaching();
-    }, [teachingId]);
+        fetchUnreadNotifications();
+    }, [teachingId, fetchUnreadNotifications]);
 
     const handleDelete = async () => {
         try {
             setIsDeleting(true);
             await deleteTeaching(teachingId);
+        toast.success(`You Deleted a Teaching`, {
+          description: `${teaching.title} has been deleted.`,
+          position: 'top-center',
+          style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #008000",
+            }        
+        });
             navigate("/admin/teachings");
         } catch (err) {
             console.error(err);
+        toast.error('Failed to Delete Teaching', {
+            description: `Failed to delete teaching. Please try again.`,
+            position: 'top-center',
+            style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #FF0000",
+              }        
+        });
             setIsDeleting(false);
             setError("Failed to delete this teaching. Please try again.");
         }

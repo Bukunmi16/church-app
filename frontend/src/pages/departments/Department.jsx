@@ -34,7 +34,7 @@ const EmptyState = ({ label, to }) => (
 );
 
 const DepartmentCard = ({ item }) => {
-    const workerCount = (item.workers?.length ?? 0) + (item.assistants?.length ?? 0);
+    const workerCount = (item.workers?.length ?? 0);
 
     return (
         <div className="flex flex-col overflow-hidden rounded-xl border border-[#1C1D22] bg-[#111214] transition-colors hover:border-[#2A2B31]">

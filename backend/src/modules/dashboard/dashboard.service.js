@@ -37,7 +37,7 @@ export const getAdminDashboardData = async (userId) => {
 
     Notification.find({recipient: userId})
       .sort({ createdAt: -1 })
-      .limit(5)
+      .limit(10)
       .lean(),
   ]);
 

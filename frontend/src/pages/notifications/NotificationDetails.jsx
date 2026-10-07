@@ -25,6 +25,7 @@ import {
 
 // ---- Helpers ----
 import { formatDateTime, formatDate } from '@/utils'
+import { useNotificationStore } from '@/stores/notifications.store';
 
 const getImageUrl = (image) => (typeof image === "string" ? image : image?.url) || null;
 
@@ -45,7 +46,7 @@ const RELATED_CONFIG = {
     },
     Service: {
         fetch: getOneService,
-        unwrap: (data) => data.service?.service ?? data.service,
+        unwrap: (data) => data.service.service,
         normalize: (s) => ({
             title: s.title,
             subtitle: s.day && s.date ? `${s.day} · ${formatDate(s.date)}` : undefined,
@@ -156,6 +157,9 @@ const NotificationDetails = () => {
     const [isLoadingRelated, setIsLoadingRelated] = useState(false);
     const [relatedNotFound, setRelatedNotFound] = useState(false);
 
+    const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
+    
+
     useEffect(() => {
         const fetchNotification = async () => {
             try {
@@ -171,6 +175,8 @@ const NotificationDetails = () => {
                 readOneNotification(notificationId).catch((err) =>
                     console.error("Failed to mark notification as read", err)
                 );
+
+                fetchUnreadNotifications(); // Update global unread count in the store
 
                 // Dynamic related-content fetch, keyed off relatedModel
                 const config = RELATED_CONFIG[notif.relatedModel];
@@ -238,7 +244,6 @@ const NotificationDetails = () => {
                 >
                     <Link to="/admin/notifications">
                         <ArrowLeft size={16} />
-                        Back to notifications
                     </Link>
                 </Button>
 

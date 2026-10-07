@@ -72,7 +72,7 @@ export const createTeaching = async (data, userId, file) => {
 
     await notifyAllActiveUsers({
         title: "New Teaching",
-        message: `${teaching.title} has been published. ${teaching.description}`,
+        message: `${title} has been published. ${description}`,
         type: "teaching",
         relatedId: teaching._id, 
         relatedModel: "Teaching"
@@ -239,7 +239,7 @@ export const updateTeaching = async (teachingId, data, file) => {
 
   await notifyAllActiveUsers({
       title: "Teaching Updated",
-      message: `${teaching.name} details has been updated. Check the teaching details for the latest information`,
+      message: `${title} details has been updated. Check the teaching details for the latest information`,
       type: "teaching",
       relatedId: teaching._id,
       relatedModel: "Teaching",

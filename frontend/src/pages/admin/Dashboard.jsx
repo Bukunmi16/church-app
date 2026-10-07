@@ -73,7 +73,9 @@ const SectionCard = ({ title, action, children, className = "" }) => (
     <div className={`rounded-xl border border-[#1C1D22] bg-[#111214] p-5 ${className}`}>
         <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#EDEDEF]">{title}</h3>
+        <Link to={`${title === 'Recent Activity' ? '/admin/notifications' : ''}`} className="flex items-center gap-1 text-sm text-[#8A8C94] hover:text-[#D62839]">
             {action}
+        </Link>
         </div>
         {children}
     </div>
@@ -95,28 +97,34 @@ const EmptyState = ({ label, to }) => (
 );
 
 const EventCard = ({ event }) => (
-    <div className="overflow-hidden rounded-lg border border-[#1C1D22] bg-[#0A0A0C]">
-        <div className="relative h-[80%] w-full bg-[#111214]">
-            {event.image?.url ? (
-                <img
-                    src={event.image.url}
-                    alt={event.title}
-                    className="h-full w-full object-cover"
-                />
-            ) : (
-                <div className="flex h-full w-full items-center justify-center">
-                    <ImageOff size={22} className="text-[#6E7079]" />
-                </div>
-            )}
-        </div>
-        <div className="p-3">
-            <p className="truncate text-sm font-medium text-[#EDEDEF]">{event.title}</p>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-[#8A8C94]">
-                <CalendarDays size={13} />
-                <span>{formatDate(event.startDate)}</span>
-            </div>
-        </div>
+ <div className="overflow-hidden rounded-lg border border-[#1C1D22] bg-[#0A0A0C]">
+  <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#111214]">
+    {event.image?.url ? (
+      <Link to={`/admin/events/${event._id}`} className="block h-full w-full">
+        <img
+          src={event.image.url}
+          alt={event.title}
+          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+        />
+      </Link>
+    ) : (
+      <div className="flex h-full w-full items-center justify-center">
+        <ImageOff size={22} className="text-[#6E7079]" />
+      </div>
+    )}
+  </div>
+
+  <div className="p-3 sm:p-4">
+    <p className="truncate text-sm font-medium text-[#EDEDEF]">
+      {event.title}
+    </p>
+
+    <div className="mt-1 flex items-center gap-1.5 text-xs text-[#8A8C94]">
+      <CalendarDays size={13} />
+      <span>{formatDate(event.startDate)}</span>
     </div>
+  </div>
+</div>
 );
 
 // ---- Main dashboard ----
@@ -156,14 +164,21 @@ const Dashboard = () => {
     }
 
     const { stats, upcomingEvents = [], upcomingService, recentActivity = [] } = dashboard ?? {};
+    const unreadActivity = recentActivity.filter((activity) => activity.isRead === false);
     
     return (
         <div className="space-y-6">
             {/* Overview stats */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <StatCard label="Total Members" value={stats?.members ?? 0} icon={User2Icon} />
-                <StatCard label="Active Workers" value={stats?.workers ?? 0} icon={UserRoundGroupIcon} />
-                <StatCard label="Departments" value={stats?.departments ?? 0} icon={CirclePileIcon} />
+                <Link to="/admin/users">
+                    <StatCard label="Total Members" value={stats?.members ?? 0} icon={User2Icon} />
+                </Link>
+                <Link to="/admin/users">
+                    <StatCard label="Active Workers" value={stats?.workers ?? 0} icon={UserRoundGroupIcon} />
+                </Link>
+                <Link to="/admin/departments">
+                    <StatCard label="Departments" value={stats?.departments ?? 0} icon={CirclePileIcon} />
+                </Link>                
             </div>
 
             <div className="grid grid-cols-1  gap-4 lg:grid-cols-3">
@@ -172,11 +187,13 @@ const Dashboard = () => {
                     {upcomingService ? (
                         <div className="flex flex-col gap-3">
                             {upcomingService.serviceImage?.url && (
+                            <Link to={`/admin/services/${upcomingService.id}`}>
                                 <img
                                     src={upcomingService.serviceImage.url}
                                     alt={upcomingService.title}
                                     className=" w-full rounded-lg object-cover"
-                                />
+                                    />
+                            </Link>
                             )}
                             <h4 className="text-lg font-semibold text-[#EDEDEF]">
                                 {upcomingService.title}
@@ -225,19 +242,19 @@ const Dashboard = () => {
                 title="Recent Activity"
                 action={<Bell size={16} className="text-[#8A8C94]" />}
             >
-                {recentActivity.length > 0 ? (
+                {unreadActivity.length > 0 ? (
                     <div className="space-y-4">
-                        {recentActivity.map((activity) => {
+                        {unreadActivity.map((activity) => {
                             const Icon = activityIconMap[activity.type] ?? Bell;
-                            console.log(Icon);
-                            
-                            return (
-                                <div key={activity._id} className="flex items-start gap-3">
+                    return activity.isRead === false ? (
+                            <Link key={activity._id} to={`/admin/notifications/${activity._id}`} className="">
+                                <div className="flex items-start gap-3 hover:bg-[#1C1D22] rounded-lg p-3 mb-0 transition-colors">
+                                    <span className='h-2 w-2 rounded-full p-0.5 bg-[#D62839] self-center' ></span>
                                     <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0A0A0C]">
                                         <Icon size={15} className="text-[#8A8C94]" strokeWidth={1.75} />
                                     </div>
-                                    <div>
-                                        <p className="text-sm leading-snug text-[#EDEDEF]">
+                                    <div className="flex flex-col min-w-0 ">
+                                        <p className="text-sm truncate line-clamp-3 leading-snug text-[#EDEDEF]">
                                             {activity.message}
                                         </p>
                                         {activity.createdAt && (
@@ -247,7 +264,8 @@ const Dashboard = () => {
                                         )}
                                     </div>
                                 </div>
-                            );
+                                </Link>
+                            ) : null
                         })}
                     </div>
                 ) : (

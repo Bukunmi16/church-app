@@ -40,6 +40,8 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import LoadingOverlay from '@/components/layout.jsx/LoadingOverlay';
+import { useNotificationStore } from '@/stores/notifications.store';
+import { toast } from 'sonner';
 
 // ---- Helpers ----
 
@@ -82,6 +84,9 @@ const Notifications = () => {
     const [selectedIds, setSelectedIds] = useState(new Set());
     const [isDeletingSelected, setIsDeletingSelected] = useState(false);
 
+    const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
+    
+
     const fetchData = async () => {
         try {
             setIsFetching(true);
@@ -94,7 +99,7 @@ const Notifications = () => {
             const {data: listData} = await getNotifications(params);
             const {data: countData} = await countNotifications();
             
-
+            fetchUnreadNotifications(); // Update global unread count in the store
             setNotifications(listData.notifications?.notifications ?? listData.notifications ?? []);
             setPagination(listData.notifications?.pagination);
             setUnreadCount(countData.count ?? countData.unreadCount ?? 0);
@@ -123,9 +128,27 @@ const Notifications = () => {
             setIsMarkingAll(true);
             await readAllNotifications();
             await fetchData();
+        toast.success('Marked All as Read', {
+          description: 'All notifications have been marked as read.',
+          position: 'top-center',
+          style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #008000",
+            }        
+        });
         } catch (err) {
             console.error(err);
             setError("Failed to mark all as read.");
+        toast.error('Failed to Mark All as Read', {
+          description: 'Failed to mark all notifications as read.',
+          position: 'top-center',
+          style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #008000",
+            }        
+        });            
         } finally {
             setIsMarkingAll(false);
         }
@@ -160,10 +183,29 @@ const Notifications = () => {
             await deleteManyNotifications(Array.from(selectedIds));
             setSelectedIds(new Set());
             await fetchData();
+        toast.success(`Deleted ${selectedIds.size} Notification(s)`, {
+          description: 'Selected notifications have been deleted.',
+          position: 'top-center',
+          style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #008000",
+            }        
+        });
+
         } catch (err) {
             console.error(err);
             setError("Failed to delete selected notifications.");
-        } finally {
+        toast.error('Failed to Delete Notifications', {
+            description: `Failed to delete notifications. Please try again.`,
+            position: 'top-center',
+            style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #FF0000",
+              }        
+        });
+          } finally {
             setIsDeletingSelected(false);
         }
     };
@@ -270,7 +312,7 @@ const Notifications = () => {
             {/* Table */}
             <div className="table-scroll overflow-hidden rounded-xl border border-[#1C1D22] bg-[#111214]">
                 {items.length > 0 ? (
-                    <Table>
+                    <Table className="table-fixed">
                         <TableBody>
                             {items.map((item) => {
                                 const Icon = TYPE_ICONS[item.type] ?? Bell;
@@ -281,14 +323,14 @@ const Notifications = () => {
                                         key={item._id}
                                         className={`border-[#1C1D22] hover:bg-[#141518] ${isSelected ? "bg-[#141518]" : ""}`}
                                     >
-                                        <TableCell className="w-10">
+                                        <TableCell className="w-5 sm:10">
                                             <Checkbox
                                                 checked={isSelected}
                                                 onCheckedChange={() => toggleOne(item._id)}
                                                 className="border-[#1C1D22] data-[state=checked]:bg-[#D62839] data-[state=checked]:border-[#D62839]"
                                             />
                                         </TableCell>
-                                        <TableCell className="w-10">
+                                        <TableCell className="w-5 sm:w-10">
                                             <span
                                                 className={`block h-2 w-2 rounded-full ${
                                                     unread ? "bg-[#D62839]" : "bg-transparent"
@@ -298,8 +340,8 @@ const Notifications = () => {
                                         <TableCell className="w-10">
                                             <Icon size={16} className="text-[#8A8C94]" />
                                         </TableCell>
-                                        <TableCell>
-                                            <Link to={`/admin/notifications/${item._id}`} className="block">
+                                        <TableCell className="min-w-0">
+                                            <Link className="block min-w-0" to={`/admin/notifications/${item._id}`}>
                                                 <p
                                                     className={`truncate text-sm ${
                                                         unread ? "font-semibold text-[#EDEDEF]" : "font-normal text-[#8A8C94]"
@@ -308,7 +350,7 @@ const Notifications = () => {
                                                     {item.title}
                                                 </p>
                                                 <p
-                                                    className={`truncate text-xs ${
+                                                    className={`truncate line-clamp-2 whitespace-normal leading-snug text-xs ${
                                                         unread ? "text-[#C7CEEA]" : "text-[#6E7079]"
                                                     }`}
                                                 >
@@ -316,7 +358,7 @@ const Notifications = () => {
                                                 </p>
                                             </Link>
                                         </TableCell>
-                                        <TableCell className="whitespace-nowrap text-right text-xs text-[#6E7079]">
+                                        <TableCell className="w-10 sm:w-24 whitespace-nowrap text-right text-xs text-[#6E7079]">
                                             {formatRelativeTime(item.createdAt)}
                                         </TableCell>
                                     </TableRow>

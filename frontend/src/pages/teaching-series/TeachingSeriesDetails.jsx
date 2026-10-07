@@ -27,6 +27,8 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { formatDuration } from '@/utils';
+import { toast } from 'sonner';
+import { useNotificationStore } from '@/stores/notifications.store';
 
 const MONTH_NAMES = [
     "January", "February", "March", "April", "May", "June",
@@ -64,6 +66,7 @@ const TeachingCard = ({ teaching }) => (
 );
 
 const TeachingSeriesDetails = () => {
+    const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
     const { seriesId } = useParams();
     const navigate = useNavigate();
 
@@ -74,32 +77,57 @@ const TeachingSeriesDetails = () => {
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
+        fetchUnreadNotifications();
         const fetchSeries = async () => {
             try {
                 const {data} = await getOneTeachingSeries(seriesId);
-                console.log(data.series);
-                
+                // console.log(data.series);
                 setSeries(data.series.series);
                 setTeachings(data.series.teachings ?? []);
             } catch (err) {
-                console.error(err);
-                setError("Failed to load this series");
+                // console.error(err);
+                toast.error('Failed to Load Teaching Series', {
+                    description: `Failed to load teaching series. Please try again.`,
+                    position: 'top-center',
+                    style: {
+                        background: "#202124",
+                        color: "#f5f5f5",
+                        border: "1px solid #FF0000",
+                    }
+                });
             } finally {
                 setIsLoading(false);
             }
         };
         fetchSeries();
-    }, [seriesId]);
+    }, [seriesId, fetchUnreadNotifications]);
 
     const handleDelete = async () => {
         try {
             setIsDeleting(true);
             await deleteTeachingSeries(seriesId);
+            toast.success('Teaching Series Deleted', {
+                description: `${series.title} has been deleted successfully.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                }
+            });
             navigate("/admin/teaching-series");
         } catch (err) {
-            console.error(err);
+            // console.error(err);
             setIsDeleting(false);
-            setError("Failed to delete this series. Please try again.");
+            toast.error('Failed to Delete Teaching Series', {
+                description: `Failed to delete teaching series. Please try again.`,
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #FF0000",
+                }
+            });
         }
     };
 
