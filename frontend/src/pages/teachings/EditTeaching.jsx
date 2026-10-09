@@ -52,7 +52,7 @@ const EditTeaching = () => {
 
     try {
          await updateTeaching(teachingId, payload);
-        navigate(`/admin/teachings/${teachingId}`);
+        navigate(`/teachings`);
 
         toast.success('Teaching Updated', {
           description: `${teaching.title} has been updated successfully.`,

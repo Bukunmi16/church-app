@@ -13,6 +13,7 @@ import teachingRoutes from './modules/teachings/teaching.routes.js'
 import notificationRoutes from './modules/notifications/notification.routes.js'
 import emailRoutes from './modules/email/email.route.js'
 import dashboardRoutes from './modules/dashboard/dashboard.routes.js'
+import churchInfoRoutes from './modules/churchInfo/church-info.routes.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 
@@ -43,7 +44,7 @@ app.use('/api/teaching-series', teachingSeriesRoutes)
 app.use('/api/notifications', notificationRoutes)
 app.use('/api/email', emailRoutes)
 app.use('/api/dashboard', dashboardRoutes)
-
+app.use('/api/church-info', churchInfoRoutes)
 
 connectDB().then(() => {
     app.listen(PORT, () =>{

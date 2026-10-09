@@ -15,6 +15,7 @@ import LoadingScreen from '@/components/ui/Loading'
 import ErrorPage from '../errors/ErrorPage'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import useAuthStore from '@/stores/auth.store';
 
 // ---- Helpers ----
 
@@ -97,6 +98,9 @@ const SeriesCard = ({ item }) => {
 };
 
 const TeachingSeries = () => {
+
+    const user = useAuthStore((state) => state.user)
+
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
     const [page, setPage] = useState(1)
@@ -186,13 +190,13 @@ const TeachingSeries = () => {
                     {isFetching && (
                         <Loader2 size={16} className="animate-spin text-[#6E7079]" />
                     )}
-                    <Button asChild size="sm" className="w-auto gap-1.5 bg-[#D62839] text-white hover:bg-[#B91F2E]">
+                   {user.role === 'admin' && <Button asChild size="sm" className="w-auto gap-1.5 bg-[#D62839] text-white hover:bg-[#B91F2E]">
                         <Link to="/admin/teaching-series/new">
                                 <div className='flex justify-between items-center gap-2'>
                                   <PlusCircle size={15} />
                         <span className='hidden sm:block'>New Series</span>                                </div>
                         </Link>
-                    </Button>
+                    </Button>}
                 </div>
             </div>
 

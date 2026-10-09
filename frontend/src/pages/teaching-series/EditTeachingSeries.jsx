@@ -47,7 +47,7 @@ const EditTeachingSeries = () => {
     const handleUpdate = async (payload) => {
         try {
             await updateTeachingSeries(seriesId, payload);
-            navigate(`/admin/teaching-series/${seriesId}`);
+            navigate(`/teaching-series`);
          toast.success('Teaching Series Updated', {
                 description: `${series.title} has been updated successfully.`,
                 position: 'top-center',

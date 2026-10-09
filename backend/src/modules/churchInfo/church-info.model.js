@@ -51,6 +51,11 @@ const ChurchInfoSchema = new mongoose.Schema(
         trim: true,
       },
 
+      x: {
+        type: String,
+        trim: true,
+      },
+
       instagram: {
         type: String,
         trim: true,

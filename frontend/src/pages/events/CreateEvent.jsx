@@ -28,7 +28,7 @@ const CreateEvent = () => {
             border: "1px solid #444",
             }        
         });
-        navigate(`/admin/events/${created._id}`);
+        navigate(`/events`);
         fetchUnreadNotifications(); // Update global unread count in the store
       } catch (error) {
         console.error("Failed to create event:", error);

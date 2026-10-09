@@ -1,6 +1,6 @@
 import { createDepartment, getAllDepartments, getDepartmentById, updateDepartment, makeLeader, makeWorker, makeAssistant, deleteAssistant, deleteWorker, removeDepartment } from "./department.service.js"
 
-export const create = async (req, res, next) => {
+export const create = async (req, res) => {
     try {
         const department = await createDepartment(req.body, req.file)
 

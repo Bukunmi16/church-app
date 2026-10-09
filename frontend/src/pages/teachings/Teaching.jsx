@@ -27,6 +27,7 @@ import {
 
 // ---- Helpers ----
 import { formatDate, formatDuration } from '@/utils';
+import useAuthStore from '@/stores/auth.store';
 
 
 
@@ -107,7 +108,8 @@ const TeachingCard = ({ item }) => (
 );
 
 const Teaching = () => {
-
+    const user = useAuthStore((state) => state.user)
+    
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
     const [page, setPage] = useState(1)
@@ -200,6 +202,7 @@ const Teaching = () => {
                     {isFetching && (
                         <Loader2 size={16} className="animate-spin text-[#6E7079]" />
                     )}
+                    { user.role === 'admin' &&
                     <Button asChild size="sm" className="w-auto gap-1.5 bg-[#D62839] text-white hover:bg-[#B91F2E]">
                         <Link to="/admin/teachings/new">
                           <div className='flex justify-between items-center gap-2'>
@@ -207,7 +210,7 @@ const Teaching = () => {
                         <span className='hidden sm:block'>New Teaching</span>
                               </div>
                         </Link>
-                    </Button>
+                    </Button>}
                 </div>
             </div>
 

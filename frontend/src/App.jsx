@@ -44,68 +44,140 @@ function App() {
   }, [initializeAuth])
 
   return (
-    <Routes>
+      <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 
-      <Route element={<ProtectedRoute/>}>
-      <Route element={<RoleRoute allowedRoles={['admin']} />}>
-      <Route path="/admin" element={<DashboardLayout />}>
-        <Route index element={<Dashboard />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<DashboardLayout />}>
 
-        <Route path="services">
-        <Route index element={<Services />}/>
-        <Route path="new" element={<CreateService />} />
-        <Route path=":serviceId" element={<ServiceDetails />} />
-        <Route path=":serviceId/edit" element={<EditService />} />
+          {/* =========================
+              SHARED RESOURCES
+          ========================== */}
+
+          {/* Services */}
+          <Route path="services">
+            <Route index element={<Services />} />
+            <Route path=":serviceId" element={<ServiceDetails />} />
+          </Route>
+          
+          
+          {/* Teachings */}
+          <Route path="teachings">
+            <Route index element={<Teaching />} />
+            <Route path=":teachingId" element={<TeachingDetails />} />
+          </Route>
+          
+          
+          {/* Teaching Series */}
+          <Route path="teaching-series">
+            <Route index element={<TeachingSeries />} />
+            <Route path=":seriesId" element={<TeachingSeriesDetails />} />
+          </Route>
+          
+          
+          {/* Events */}
+          <Route path="events">
+            <Route index element={<Event />} />
+            <Route path=":eventId" element={<EventDetails />} />
+          </Route>
+          
+          
+          {/* Departments */}
+          <Route path="departments">
+            <Route index element={<Department />} />
+            <Route path=":departmentId" element={<DepartmentDetails />} />
+          </Route>
+          
+          
+          {/* Users */}
+          <Route path="users">
+            <Route index element={<ViewUsers />} />
+            <Route path=":userId" element={<UserDetails />} />
+          </Route>
+          
+          
+          {/* Notifications */}
+          <Route path="notifications">
+            <Route index element={<Notifications />} />
+            <Route path=":notificationId" element={<NotificationDetails />} />
+          </Route>
+          
+          
+          {/* Settings */}
+          <Route path="settings" element={<Settings />} />
+          
+          
+          {/* =========================
+              ADMIN ONLY
+          ========================== */}
+
+          <Route element={<RoleRoute allowedRoles={["admin"]} />}>
+            <Route path="admin">
+              <Route index element={<Dashboard />} />
+          
+              {/* Management routes */}
+              <Route path="services/new" element={<CreateService />} />
+              <Route
+                path="services/:serviceId/edit"
+                element={<EditService />}
+              />
+
+              <Route path="teachings/new" element={<CreateTeaching />} />
+              <Route
+                path="teachings/:teachingId/edit"
+                element={<EditTeaching />}
+              />
+
+              <Route
+                path="teaching-series/new"
+                element={<CreateTeachingSeries />}
+              />
+              <Route
+                path="teaching-series/:seriesId/edit"
+                element={<EditTeachingSeries />}
+              />
+
+              <Route path="events/new" element={<CreateEvent />} />
+              <Route
+                path="events/:eventId/edit"
+                element={<EditEvent />}
+              />
+
+              <Route path="departments/new" element={<CreateDepartment />} />
+              <Route
+                path="departments/:departmentId/edit"
+                element={<EditDepartment />}
+              />
+            </Route>
+          </Route>
+          
+          
+          {/* =========================
+              WORKER
+          ========================== */}
+
+          <Route element={<RoleRoute allowedRoles={["worker"]} />}>
+            <Route path="worker">
+              <Route index element={<WorkerDashboard />} />
+            </Route>
+          </Route>
+          
+          
+          {/* =========================
+              MEMBER
+          ========================== */}
+
+          <Route element={<RoleRoute allowedRoles={["member"]} />}>
+            <Route path="member">
+              {/* <Route index element={<MemberDashboard />} /> */}
+            </Route>
+          </Route>
+          
         </Route>
-
-        <Route path="teachings" >
-        <Route index element={<Teaching />} />
-        <Route path="new" element={<CreateTeaching />} />
-        <Route path=":teachingId" element={<TeachingDetails />} />
-        <Route path=":teachingId/edit" element={<EditTeaching />} />
-        </Route>
-
-        <Route path="teaching-series" >
-        <Route index element={<TeachingSeries />} />
-        <Route path="new" element={<CreateTeachingSeries />} />
-        <Route path=":seriesId" element={<TeachingSeriesDetails />} />
-        <Route path=":seriesId/edit" element={<EditTeachingSeries />} />
-        </Route>
-
-        <Route path="events" >
-        <Route index element={<Event />} />
-        <Route path="new" element={<CreateEvent />} />
-        <Route path=":eventId" element={<EventDetails />} />
-        <Route path=":eventId/edit" element={<EditEvent />} />
-        </Route>
-
-        <Route path="departments" >
-        <Route index element={<Department />} />
-        <Route path="new" element={<CreateDepartment />} />
-        <Route path=":departmentId" element={<DepartmentDetails />} />
-        <Route path=":departmentId/edit" element={<EditDepartment />} />
-        </Route>
-
-        <Route path="users" >
-        <Route index element={<ViewUsers />} />
-        <Route path=":userId" element={<UserDetails />} />
-        </Route>
-
-        <Route path="notifications" >
-        <Route index element={<Notifications />} />
-        <Route path=":notificationId" element={<NotificationDetails />} />
-        </Route>
-
-        <Route path="settings" element={<Settings/>} />
-
-      </Route>
-      </Route>
-
-      <Route path="/worker" element={<WorkerDashboard/>}></Route>
       </Route>
     </Routes>
+
   )
 }
 

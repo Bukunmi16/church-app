@@ -32,6 +32,7 @@ import {
 import { formatDate, formatTime } from '@/utils';
 import { toast } from 'sonner';
 import { useNotificationStore } from '@/stores/notifications.store';
+import useAuthStore from '@/stores/auth.store';
 
 const startOfDay = (date) => {
     const d = new Date(date);
@@ -59,6 +60,8 @@ const StatusCapsule = ({ status }) => {
 
 const EventDetails = () => {
     const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
+    const user = useAuthStore((state) => state.user)
+
     const { eventId } = useParams();
     
     const navigate = useNavigate();
@@ -108,7 +111,7 @@ const EventDetails = () => {
                     border: "1px solid #008000",
                 }
               });
-            navigate("/admin/events");
+            navigate("/events");
         } catch (err) {
             // console.error(err);
             setIsDeleting(false);
@@ -156,7 +159,8 @@ const EventDetails = () => {
                     </Link>
                 </Button>
 
-                <div className="flex items-center gap-2">
+                {user.role === 'admin' &&
+                    <div className="flex items-center gap-2">
                     <Button
                         asChild
                         variant="outline"
@@ -207,7 +211,7 @@ const EventDetails = () => {
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
-                </div>
+                </div>}
             </div>
 
             {/* Overview: image and details as separate panels */}

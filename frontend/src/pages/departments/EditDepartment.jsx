@@ -44,7 +44,7 @@ const EditDepartment = () => {
         await updateDepartment(departmentId, payload);
         // console.log(payload);
         
-        navigate(`/admin/departments/${departmentId}`);
+        navigate(`/departments/${departmentId}`);
     };
 
     return (

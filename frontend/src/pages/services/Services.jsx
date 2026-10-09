@@ -24,6 +24,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { formatTime, getServiceStatus } from '@/utils';
+import useAuthStore from '@/stores/auth.store';
 
 
 const SERVICE_TYPES = [
@@ -135,13 +136,14 @@ return(
                 size="sm"
                 className="mt-auto w-full border-[#1C1D22] bg-transparent text-[#EDEDEF] hover:bg-[#141518] hover:text-[#EDEDEF]"
             >
-                <Link to={`/admin/services/${item._id}`}>Manage</Link>
+                <Link to={`/admin/services/${item._id}`}>View</Link>
             </Button>
         </div>
     </div>
 )};
 
 const Services = () => {
+    const user = useAuthStore((state) => state.user)
 
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
@@ -249,6 +251,7 @@ const Services = () => {
                     {isFetching && (
                         <Loader2 size={16} className="animate-spin text-[#6E7079]" />
                     )}
+                    { user.role === 'admin' &&
                     <Button asChild size="sm" className="w-auto gap-1.5 bg-[#D62839] text-white hover:bg-[#B91F2E]">
                         <Link to="/admin/services/new">
                           <div className='flex justify-between items-center gap-2'>
@@ -256,7 +259,7 @@ const Services = () => {
                             <span className='hidden sm:block'>New Service</span>
                               </div>
                         </Link>
-                    </Button>
+                    </Button>}
                 </div>
             </div>
 

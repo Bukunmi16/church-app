@@ -25,7 +25,7 @@ export const updateUserRole = async (userId, role) => {
 }
 
 export const deleteUser = async (userId) => {
-    const response = await api.patch(`/users/${userId}`)
+    const response = await api.delete(`/users/${userId}`)
 
     return response
 }

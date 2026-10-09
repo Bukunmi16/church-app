@@ -1,4 +1,4 @@
-import { getUsers, findUserById, updateUserRole, updateUserDetails, toggleStatus, removeUser } from "./user.service.js"
+import { getUsers, findUserById, updateUserRole, updateUserDetails, toggleStatus, removeUser, updateUserPassword } from "./user.service.js"
 
 export const getAllUsers = async (req, res, next) => {
     try {
@@ -9,7 +9,10 @@ export const getAllUsers = async (req, res, next) => {
             users
         })
     } catch (error) {
-    next(error)       
+        res.status(400).json({
+            success: false,
+            message: error.message
+        })
     }
 }
 
@@ -23,7 +26,10 @@ export const getOneUser = async (req, res, next) => {
         })
 
     } catch (error) {
-        next(error)
+        res.status(400).json({
+            success: false,
+            message: error.message
+        })
     }
 }
 
@@ -44,7 +50,10 @@ export const changeUserRole = async (req, res, next) => {
         })
 
     } catch (error) {
-        next(error)
+        res.status(400).json({
+            success: false,
+            message: error.message
+        })
     }
 }
 
@@ -59,7 +68,10 @@ export const changeUserStatus = async (req, res, next) => {
         })
 
     } catch (error) {
-        next(error)
+        res.status(400).json({
+            success: false,
+            message: error.message
+        })
     }
 }
 
@@ -74,19 +86,44 @@ export const deleteUser = async (req, res, next) => {
         })
 
     } catch (error) {
-        next(error)
+        res.status(400).json({
+            success: false,
+            message: error.message
+        })
     }
 }
 
 export const update = async (req, res) => {
     try {
-        const user = await updateUserDetails(req.params.id, req.body, req.file)
+        const userId = req.user._id
+        const user = await updateUserDetails(userId, req.body, req.file)
 
         res.status(200).json({
-            message: "User Details Updated Successfully",
+            message: "Your Details have been Updated Successfully",
             user
         })
     } catch (error) {
-        next(error)
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        })
     }
 }
+
+export const updatePassword = async (req, res) => {
+    try {
+        const userId = req.user._id
+        const {currentPassword, newPassword} = req.body
+        await updateUserPassword(userId, currentPassword, newPassword)
+
+        res.status(200).json({
+            message: "Your Password has been Updated Successfully",
+        })
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        })
+    }
+};
+        

@@ -11,8 +11,12 @@ import {
     BadgeCheck,
     BadgeX,
     Loader2,
+    Crown,
+    Shield,
+    Users,
 } from "lucide-react";
 import { getOneUser, updateUserStatus, updateUserRole, deleteUser } from '@/api/users.api'
+import { getDepartments } from '@/api/departments.api'
 import LoadingScreen from '@/components/ui/Loading'
 import ErrorPage from '../errors/ErrorPage'
 import { Button } from "@/components/ui/button";
@@ -37,6 +41,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import useAuthStore from '@/stores/auth.store';
+import { toast } from 'sonner';
 
 // ---- Helpers ----
 
@@ -52,6 +57,19 @@ const formatDate = (dateString) =>
         : "—";
 
 const getInitials = (name) => name?.slice(0, 2).toUpperCase() ?? "";
+
+// Department members can arrive as plain ID strings or populated user objects
+const idOf = (value) => (typeof value === "string" ? value : value?._id);
+
+// Highest role wins if a user somehow appears in more than one list of the same department
+const getMembership = (department, userId) => {
+    if (idOf(department.leader) === userId) return "leader";
+    if ((department.assistants ?? []).some((a) => idOf(a) === userId)) return "assistant";
+    if ((department.workers ?? []).some((w) => idOf(w) === userId)) return "worker";
+    return null;
+};
+
+const MEMBERSHIP_ORDER = { leader: 0, assistant: 1, worker: 2 };
 
 // ---- Reusable confirmation dialog (no visible trigger — opened programmatically) ----
 
@@ -88,16 +106,47 @@ const InfoRow = ({ icon, children }) => (
     </div>
 );
 
+// Pill linking to a department the user belongs to; leaders get a distinct red-accented treatment
+const DepartmentPill = ({ department, membership }) => {
+    const isLeader = membership === "leader";
+    const Icon = isLeader ? Crown : membership === "assistant" ? Shield : Users;
+
+    return (
+        <Link
+            to={`/departments/${department._id}`}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                isLeader
+                    ? "border-[#D62839]/30 bg-[#D62839]/10 text-[#F2A0A8] hover:bg-[#D62839]/20"
+                    : "border-transparent bg-[#12183A] text-[#C7CEEA] hover:bg-[#1A2250]"
+            }`}
+        >
+            <Icon size={12} className="shrink-0" />
+            <span>{department.name}</span>
+            {membership !== "worker" && (
+                <span className="opacity-70">· {isLeader ? "Leader" : "Assistant"}</span>
+            )}
+        </Link>
+    );
+};
+
 const UserDetails = () => {
     const currentUser = useAuthStore((state) => state.user)
-//  console.log(currentUser);
+ console.log(currentUser._id);
  
-    const { userId } = useParams();
+ const { userId } = useParams();
+ console.log(userId);
+
+
     const navigate = useNavigate();
 
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+
+    // Departments this user belongs to — loaded separately so it never blocks the page
+    const [userDepartments, setUserDepartments] = useState([]);
+    const [isLoadingDepartments, setIsLoadingDepartments] = useState(true);
+    const [departmentsFailed, setDepartmentsFailed] = useState(false);
 
     // Pending actions — nothing is applied to `user` until confirmed
     const [pendingRole, setPendingRole] = useState(null); // string | null
@@ -123,6 +172,30 @@ const UserDetails = () => {
         fetchUser();
     }, [userId]);
 
+    useEffect(() => {
+        const fetchUserDepartments = async () => {
+            try {
+                setIsLoadingDepartments(true);
+                setDepartmentsFailed(false);
+                const { data } = await getDepartments({ limit: 100 });
+                const departments = data.departments?.departments ?? data.departments ?? [];
+
+                const memberships = departments
+                    .map((department) => ({ department, membership: getMembership(department, userId) }))
+                    .filter((entry) => entry.membership !== null)
+                    .sort((a, b) => MEMBERSHIP_ORDER[a.membership] - MEMBERSHIP_ORDER[b.membership]);
+
+                setUserDepartments(memberships);
+            } catch (err) {
+                console.error("Failed to load departments", err);
+                setDepartmentsFailed(true);
+            } finally {
+                setIsLoadingDepartments(false);
+            }
+        };
+        fetchUserDepartments();
+    }, [userId]);
+
     if (isLoading) {
         return <LoadingScreen />;
     }
@@ -142,25 +215,58 @@ const UserDetails = () => {
             
             await updateUserRole(userId, {role: pendingRole} );
             setUser((prev) => ({ ...prev, role: pendingRole }));
+            toast.success(`${user.name} is now ${pendingRole === 'admin' ? 'an' : 'a'} ${pendingRole}`, {
+                position: 'top-center',
+                style: {
+                    background: "#202124",
+                    color: "#f5f5f5",
+                    border: "1px solid #008000",
+                  }        
+                });            
+
             setPendingRole(null);
         } catch (err) {
             console.error(err);
-            setError("Failed to update role. Please try again.");
+        toast.error('Failed to Update User Role', {
+            description: err.response?.data?.message || 'Failed to update role. Please try again.',
+            position: 'top-center',
+            style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #FF0000",
+              }});   
         } finally {
             setIsSavingRole(false);
         }
     };
 
     const confirmStatusChange = async () => {
+        // Declared outside the try block so the catch block can read it too
+        const nextStatus = !user.isActive;
         try {
             setIsSavingStatus(true);
-            const nextStatus = !user.isActive;
             await updateUserStatus(userId, nextStatus);
             setUser((prev) => ({ ...prev, isActive: nextStatus }));
+            toast.success(`${user.name}'s account has been ${nextStatus ? 'Activated' : 'Deactivated'} Successfully`, {
+                  position: 'top-center',
+                  style: {
+                      background: "#202124",
+                      color: "#f5f5f5",
+                      border: "1px solid #008000",
+                    }        
+                });        
+
             setPendingStatusChange(false);
         } catch (err) {
             console.error(err);
-            setError("Failed to update status. Please try again.");
+        toast.error(`Failed to ${nextStatus ? 'Activate' : 'Deactivate'} ${user.name}'s account`, {
+            description: err.response?.data?.message || 'Failed to update status. Please try again.',
+            position: 'top-center',
+            style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #FF0000",
+              }})
         } finally {
             setIsSavingStatus(false);
         }
@@ -170,11 +276,28 @@ const UserDetails = () => {
         try {
             setIsDeleting(true);
             await deleteUser(userId);
-            navigate("/admin/members");
+            toast.success(`${user.name}'s account has been deleted Successfully`, {
+                      position: 'top-center',
+                      style: {
+                          background: "#202124",
+                          color: "#f5f5f5",
+                          border: "1px solid #008000",
+                        }        
+                    });
+            navigate("/admin/users");
         } catch (err) {
             console.error(err);
+            console.log({err});
+            
             setIsDeleting(false);
-            setError("Failed to delete this user. Please try again.");
+        toast.error(`Failed to delete ${user.name}'s account`, {
+            description: err.response?.data?.message || 'Failed to delete this user. Please try again.',
+            position: 'top-center',
+            style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #FF0000",
+              }})
         }
     };
 
@@ -188,7 +311,7 @@ const UserDetails = () => {
                     size="sm"
                     className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
                 >
-                    <Link to="/admin/users">
+                    <Link to="/users">
                       <div className='flex justify-between items-center gap-2'>
                         <ArrowLeft size={16} />
                         <p>Back to Users</p>
@@ -196,7 +319,7 @@ const UserDetails = () => {
                     </Link>
                 </Button>
 
-                <AlertDialog>
+              {currentUser._id !== userId || user.role === 'admin' &&  <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button
                             variant="outline"
@@ -204,7 +327,8 @@ const UserDetails = () => {
                             className="gap-1.5 border-[#1C1D22] bg-transparent text-[#D62839] hover:bg-[#D62839]/10 hover:text-[#D62839]"
                         >
                             <Trash2 size={14} />
-                            Delete
+                        <span className='hidden sm:block'>Delete</span>
+                            
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">
@@ -229,14 +353,14 @@ const UserDetails = () => {
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
-                </AlertDialog>
+                </AlertDialog>}
             </div>
 
             {/* Overview: avatar and details as separate panels */}
             <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2">
                 {/* Avatar — standalone, circular since this is a person, not content */}
                 <div className="flex items-center justify-center  border-[#1C1D22] bg-[#0A0A0C] ">
-                    <div className="flex h-100 w-100 items-center justify-center overflow-hidden rounded-full bg-[#12183A]">
+                    <div className={`flex ${!user.profileImage?.url && 'h-50 w-50 rounded-full'}  items-center justify-center overflow-hidden bg-[#12183A]`}>
                         {user.profileImage?.url ? (
                             <img
                                 src={user.profileImage.url}
@@ -252,7 +376,7 @@ const UserDetails = () => {
                 </div>
 
                 {/* Details */}
-                <div className="space-y-4 rounded-xl border border-[#1C1D22] bg-[#111214] p-6">
+                <div className="space-y-4 rounded-xl border border-[#1C1D22] bg-[#111214] p-6 h-fit">
                     <div>
                         <h1 className="text-xl font-semibold text-[#EDEDEF]">{user.name}</h1>
                         <div className="mt-1.5 flex items-center gap-2">
@@ -282,7 +406,7 @@ const UserDetails = () => {
                         <InfoRow icon={<CalendarDays size={15} className="shrink-0" />}>
                             Joined {formatDate(user.createdAt)}
                         </InfoRow>
-                        <InfoRow
+                        {/* {user._id !== userId && <InfoRow
                             icon={
                                 user.emailVerified ? (
                                     <BadgeCheck size={15} className="shrink-0 text-[#34D399]" />
@@ -292,15 +416,38 @@ const UserDetails = () => {
                             }
                         >
                             {user.emailVerified ? "Email verified" : "Email not verified"}
-                        </InfoRow>
+                        </InfoRow>} */}
                         {user.gender && (
                             <p className="text-xs capitalize text-[#6E7079]">{user.gender}</p>
                         )}
                     </div>
 
+                    {/* Departments this user belongs to */}
+                    <div className="border-t border-[#1C1D22] pt-4">
+                        <p className="mb-2 text-xs font-medium text-[#6E7079]">Departments</p>
+                        {isLoadingDepartments ? (
+                            <Loader2 size={14} className="animate-spin text-[#6E7079]" />
+                        ) : departmentsFailed ? (
+                            <p className="text-sm text-[#6E7079]">Couldn't load departments.</p>
+                        ) : userDepartments.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                                {userDepartments.map(({ department, membership }) => (
+                                    <DepartmentPill
+                                        key={department._id}
+                                        department={department}
+                                        membership={membership}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-[#6E7079]">Not part of any department.</p>
+                        )}
+                    </div>
+
                     {/* Account management — proposing a change here doesn't apply it until confirmed */}
-                    <div className="space-y-4 border-t border-[#1C1D22] pt-4">
-                        <div className="flex items-center justify-between">
+                   { currentUser.role === 'admin' && <div className="space-y-4 border-t border-[#1C1D22] pt-4">
+                        {currentUser._id !== userId &&
+                            <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm font-medium text-[#EDEDEF]">Account status</p>
                                 <p className="text-xs text-[#8A8C94]">
@@ -311,7 +458,7 @@ const UserDetails = () => {
                                 checked={user.isActive}
                                 onCheckedChange={() => setPendingStatusChange(true)}
                             />
-                        </div>
+                        </div>}
 
                         <div className="flex items-center justify-between">
                             <p className="text-sm font-medium text-[#EDEDEF]">Role</p>
@@ -331,7 +478,7 @@ const UserDetails = () => {
                                 </SelectContent>
                             </Select>
                         </div>
-                    </div>
+                    </div>}
                 </div>
             </div>
 

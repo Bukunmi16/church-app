@@ -29,6 +29,7 @@ import {
 import { formatDuration } from '@/utils';
 import { toast } from 'sonner';
 import { useNotificationStore } from '@/stores/notifications.store';
+import useAuthStore from '@/stores/auth.store';
 
 const MONTH_NAMES = [
     "January", "February", "March", "April", "May", "June",
@@ -67,6 +68,7 @@ const TeachingCard = ({ teaching }) => (
 
 const TeachingSeriesDetails = () => {
     const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
+    const user = useAuthStore((state) => state.user)
     const { seriesId } = useParams();
     const navigate = useNavigate();
 
@@ -115,7 +117,7 @@ const TeachingSeriesDetails = () => {
                     border: "1px solid #008000",
                 }
             });
-            navigate("/admin/teaching-series");
+            navigate("/teaching-series");
         } catch (err) {
             // console.error(err);
             setIsDeleting(false);
@@ -159,7 +161,7 @@ const TeachingSeriesDetails = () => {
                               </div>                    
                     </Link>
                 </Button>
-
+{ user.role === 'admin' &&
                 <div className="flex items-center gap-2">
                     <Button
                         asChild
@@ -210,7 +212,7 @@ const TeachingSeriesDetails = () => {
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
-                </div>
+                </div>}
             </div>
 
             {/* Overview: thumbnail and details as separate panels */}
@@ -248,7 +250,7 @@ const TeachingSeriesDetails = () => {
             <div>
                 <div className="mb-3 flex items-center justify-between">
                     <h2 className="text-sm font-semibold text-[#EDEDEF]">Teachings</h2>
-                    <Button
+                    {user.role === 'admin' && <Button
                         asChild
                         variant="ghost"
                         size="sm"
@@ -260,7 +262,7 @@ const TeachingSeriesDetails = () => {
                                   <p>Add teaching</p>
                               </div>
                         </Link>
-                    </Button>
+                    </Button>}
                 </div>
 
                 {teachings.length > 0 ? (
@@ -274,7 +276,7 @@ const TeachingSeriesDetails = () => {
                         <p className="text-sm text-[#8A8C94]">
                             No teachings in this series yet.
                         </p>
-                        <Button
+                        { user.role === 'admin' && <Button
                             asChild
                             size="sm"
                             className="gap-2 bg-[#D62839] text-white hover:bg-[#B91F2E]"
@@ -285,7 +287,7 @@ const TeachingSeriesDetails = () => {
                                   <p>Add a Teaching</p>
                               </div>
                             </Link>
-                        </Button>
+                        </Button>}
                     </div>
                 )}
             </div>

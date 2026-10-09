@@ -41,7 +41,7 @@ const RELATED_CONFIG = {
             title: t.title,
             subtitle: t.preacher,
             image: t.thumbnail?.url,
-            path: `/admin/teachings/${t._id}`,
+            path: `/teachings/${t._id}`,
         }),
     },
     Service: {
@@ -51,7 +51,7 @@ const RELATED_CONFIG = {
             title: s.title,
             subtitle: s.day && s.date ? `${s.day} · ${formatDate(s.date)}` : undefined,
             image: s.serviceImage?.url,
-            path: `/admin/services/${s._id}`,
+            path: `/services/${s._id}`,
         }),
     },
     Event: {
@@ -61,7 +61,7 @@ const RELATED_CONFIG = {
             title: e.title,
             subtitle: formatDate(e.startDate),
             image: getImageUrl(e.image),
-            path: `/admin/events/${e._id}`,
+            path: `/events/${e._id}`,
         }),
     },
     TeachingSeries: {
@@ -71,7 +71,7 @@ const RELATED_CONFIG = {
             title: s.title,
             subtitle: `${s.month}/${s.year}`,
             image: s.thumbnail?.url,
-            path: `/admin/teaching-series/${s._id}`,
+            path: `/teaching-series/${s._id}`,
         }),
     },
     Department: {
@@ -81,7 +81,7 @@ const RELATED_CONFIG = {
             title: d.name,
             subtitle: d.description,
             image: d.image?.url,
-            path: `/admin/departments/${d._id}`,
+            path: `/departments/${d._id}`,
         }),
     },
     User: {
@@ -91,7 +91,7 @@ const RELATED_CONFIG = {
             title: u.name,
             subtitle: u.email,
             image: u.profileImage?.url,
-            path: `/admin/members/${u._id}`,
+            path: `/users/${u._id}`,
         }),
     },
 };
@@ -212,7 +212,7 @@ const NotificationDetails = () => {
         try {
             setIsDeleting(true);
             await deleteNotification(notificationId);
-            navigate("/admin/notifications");
+            navigate("/notifications");
         } catch (err) {
             console.error(err);
             setIsDeleting(false);
@@ -242,7 +242,7 @@ const NotificationDetails = () => {
                     size="sm"
                     className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
                 >
-                    <Link to="/admin/notifications">
+                    <Link to="/notifications">
                         <ArrowLeft size={16} />
                     </Link>
                 </Button>

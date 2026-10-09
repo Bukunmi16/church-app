@@ -24,7 +24,7 @@ const CreateTeaching = () => {
         const {data} = await createTeaching(payload);
         fetchUnreadNotifications(); // Update global unread count in the store
         
-        navigate(`/admin/teachings/${data.teaching._id}`);        
+        navigate(`/teachings`);        
         
         toast.success('Teaching Created', {
           description: `${data.teaching.title} has been created successfully.`,

@@ -47,7 +47,7 @@ const EditEvent = () => {
     const handleUpdate = async (payload) => {
         try {
             await updateEvent(eventId, payload);
-            navigate(`/admin/events/${eventId}`);
+            navigate(`/events/${eventId}`);
         toast.success('Event Updated', {
                 description: `${event.title} has been updated successfully.`,
                 position: 'top-center',

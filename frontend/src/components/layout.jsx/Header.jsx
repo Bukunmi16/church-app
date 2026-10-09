@@ -4,6 +4,8 @@ import useUIStore from "../../stores/ui.store";
 import useAuthStore from "@/stores/auth.store";
 import { Link } from "react-router";
 import { useNotificationStore } from "@/stores/notifications.store";
+import { useChurchInfoStore } from "@/stores/church-info.store";
+import { useEffect } from "react";
 
 
 // TODO: replace with real auth/user data once wired up
@@ -19,6 +21,12 @@ const Header = () => {
     const toggleSidebar = useUIStore((state) => state.toggleMobileSidebar)
     const expand = useUIStore((state) => !state.desktopSidebarOpen)
 
+    const churchData = useChurchInfoStore((state) => state.churchInfo)
+    const fetchChurchData = useChurchInfoStore((state) => state.fetchChurchInfo)
+    useEffect(() => {
+        fetchChurchData()
+    }, [])
+
     return (
         <header className="flex h-16 items-center justify-between border-[#1C1D22] bg-[#0A0A0C] px-6">
             {/* Left side */}
@@ -33,17 +41,17 @@ const Header = () => {
                 </Button>
                 <div>
                     <h2 className="text-lg font-semibold text-[#EDEDEF]">
-                    <h1 className=" whitespace-nowrap lg:block hidden  text-[15px] font-bold tracking-tight text-[#EDEDEF]">
-                        Rhema Chapel Ogbomoso
+                    <h1 className="whitespace-nowrap lg:block hidden  text-[15px] font-bold tracking-tight text-[#EDEDEF]">
+                    {churchData?.motto}
                     </h1>
                     </h2>
                 </div>
                         {/* <p className="font-thin font-fancy text lg:block hidden text-[#D62839]">Home of the blessed people</p> */}
             </div>
 
-            <div className="md:hidden flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-[#D62839]">
+            <div className="md:hidden flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full ">
                 <img
-                    src="https://res.cloudinary.com/jkjwwa8p/image/upload/v1788384142/rhema-logo.jpg"
+                    src={churchData?.logo?.url}
                     alt="Rhema Chapel logo"
                     className="h-9 w-9 shrink-0 object-contain rounded-full"
                 />
@@ -81,6 +89,7 @@ const Header = () => {
                         </div>
                     )}
 
+                    <Link to='/settings'>
                     <div className="hidden flex-col items-start sm:flex">
                         <span className="text-sm font-medium leading-tight text-[#EDEDEF]">
                             {currentUser.name}
@@ -89,6 +98,7 @@ const Header = () => {
                             {currentUser.role}
                         </span>
                     </div>
+                    </Link>
                 </button>
             </div>
         </header>

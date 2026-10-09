@@ -11,6 +11,7 @@ import {
     Layers,
     Users,
     User,
+    Clock,
 } from "lucide-react";
 import { getOneTeaching, deleteTeaching } from '@/api/teachings.api'
 import LoadingScreen from '@/components/ui/Loading'
@@ -29,6 +30,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useNotificationStore } from '@/stores/notifications.store';
 import { toast } from 'sonner';
+import { formatDuration } from '@/utils';
+import useAuthStore from '@/stores/auth.store';
 
 // ---- Inline brand icons (lucide dropped brand/logo icons in v1) ----
 
@@ -105,6 +108,7 @@ const RelatedCard = ({ to, icon, label, title, subtitle }) => (
 
 const TeachingDetails = () => {
     const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
+    const user = useAuthStore((state) => state.user)
 
     const { teachingId } = useParams();
     const navigate = useNavigate();
@@ -145,7 +149,7 @@ const TeachingDetails = () => {
               border: "1px solid #008000",
             }        
         });
-            navigate("/admin/teachings");
+            navigate("/teachings");
         } catch (err) {
             console.error(err);
         toast.error('Failed to Delete Teaching', {
@@ -189,8 +193,9 @@ const TeachingDetails = () => {
                     </Link>
                 </Button>
 
+               {user.role === 'admin' &&
                 <div className="flex items-center gap-2">
-                  <Link to={'edit'}>
+                  <Link to={`/admin/teachings/${teachingId}/edit`}>
                     <Button
                         variant="outline"
                         size="sm"
@@ -235,7 +240,7 @@ const TeachingDetails = () => {
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
-                </div>
+                </div>}
             </div>
 
             {/* Overview: thumbnail and details as separate panels */}
@@ -255,14 +260,20 @@ const TeachingDetails = () => {
 
                 {/* Details — standalone */}
                 <div className="space-y-4 h-fit rounded-xl border border-[#1C1D22] bg-[#111214] p-6">
-                    <div>
-                        <h1 className="text-xl font-semibold text-[#EDEDEF]">{teaching.title}</h1>
+                    <div className='flex justify-between'>
+                        <span>
+                        <h1 className="text-xl font-bold text-[#EDEDEF]">{teaching.title}</h1>
                         {teaching.preacher && (
                             <div className="mt-2 flex items-center gap-1.5 text-sm text-[#8A8C94]">
                                 <Mic2 size={15} className="shrink-0" />
                                 <span>{teaching.preacher}</span>
                             </div>
                         )}
+                        </span>
+                        <div className='flex items-center gap-2 cursor-pointer hover:text-white text-sm text-[#8A8C94]'>
+                            <Clock size={13}/>
+                             {formatDuration(teaching.duration)}
+                        </div>
                     </div>
 
                     {teaching.description && (
@@ -293,19 +304,24 @@ const TeachingDetails = () => {
             {/* Related: service, series, department */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-">
                 {teaching.service && (
+                <div className='flex flex-col gap-2'>
+                    <span className='text-[12px] font-bold'>Related Service</span>
                     <RelatedCard
-                        to={`/admin/services/${teaching.service._id}`}
-                        icon={<CalendarDays size={16} className="text-[#EDEDEF]" />}
-                        title={teaching.service.title}
-                        label={`${teaching.service.day} Service`}
-                        subtitle={
-                            teaching.service.day && teaching.service.date
-                                ? `${teaching.service.serviceType} · ${formatDate(teaching.service.date)}`
-                                : undefined
-                        }
+                    to={`/admin/services/${teaching.service._id}`}
+                    icon={<CalendarDays size={16} className="text-[#EDEDEF]" />}
+                    title={teaching.service.title}
+                    label={`${teaching.service.day} Service`}
+                    subtitle={
+                        teaching.service.day && teaching.service.date
+                        ? `${teaching.service.serviceType} · ${formatDate(teaching.service.date)}`
+                        : undefined
+                    }
                     />
+                </div>
                 )}
                 {teaching.series && (
+                <div className='flex flex-col gap-2'>
+                <span className='text-[12px] font-bold'>Related Teaching Series</span>
                     <RelatedCard
                     to={`/admin/teaching-series/${teaching.series._id}`}
                     icon={<Layers size={16} className="text-[#EDEDEF]" />}
@@ -313,8 +329,10 @@ const TeachingDetails = () => {
                     title={teaching.series.title}
                     subtitle={formatSeries(teaching.series)}
                     />
+                    </div>
                 )}
-                {teaching.department && (
+
+                {teaching.department && user.role === 'admin' && (
                   <RelatedCard
                   to={`/admin/departments/${teaching.department._id}`}
                   icon={<Users size={16} className="text-[#EDEDEF]" />}
@@ -325,7 +343,7 @@ const TeachingDetails = () => {
 
                 
             {/* Created by */}
-            {teaching.createdBy && (
+            {teaching.createdBy && user.role === 'admin' && (
               <div className="flex items-center   gap-3 rounded-xl border border-[#1C1D22] bg-[#111214] p-4">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0A0A0C]">
                         <User size={16} className="text-[#8A8C94]" />

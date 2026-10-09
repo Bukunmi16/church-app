@@ -341,7 +341,7 @@ const Notifications = () => {
                                             <Icon size={16} className="text-[#8A8C94]" />
                                         </TableCell>
                                         <TableCell className="min-w-0">
-                                            <Link className="block min-w-0" to={`/admin/notifications/${item._id}`}>
+                                            <Link className="block min-w-0" to={`/notifications/${item._id}`}>
                                                 <p
                                                     className={`truncate text-sm ${
                                                         unread ? "font-semibold text-[#EDEDEF]" : "font-normal text-[#8A8C94]"

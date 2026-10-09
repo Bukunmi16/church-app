@@ -124,50 +124,85 @@ export const removeUser = async (userId, currentUserId) => {
     }
 
 export const updateUserDetails = async (userId, data, file) => {
-    const user = await User.findById(userId)
+  const user = await User.findById(userId);
 
-    if(!user){
-        throw new Error('User does not exist')
-    }
+  if (!user) {
+    throw new Error("User does not exist");
+  }
 
-    if(file){
-        if(user.profileImage?.publicId) {
-            await deleteFromCloudinary(user.profileImage.publicId)
-        }
+  if (file) {
+    const oldPublicId = user.profileImage?.publicId;
+
     const imageData = await uploadToCloudinary(
-        file.buffer,
-        "church-app/users"
-    )
-        user.profileImage = imageData    
+      file.buffer,
+      "church-app/users"
+    );
+
+    user.profileImage = imageData;
+
+    if (oldPublicId) {
+      await deleteFromCloudinary(oldPublicId);
     }
+  }
 
-    const {name, email, phone, password, dateOfBirth, gender, address} = data
+  const {
+    name,
+    email,
+    phone,
+    dateOfBirth,
+    gender,
+    address,
+  } = data;
 
-    if (email !== undefined) {
-        const existingUser = await User.findOne({
-        email: email.trim().toLowerCase(),
-         _id: { $ne: userId },
-      });
+  if (email !== undefined) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
+      _id: { $ne: userId },
+    });
 
     if (existingUser) {
-        throw new Error("Email is already in use");
+      throw new Error("Email is already in use");
     }
 
-      user.email = email
+    user.email = normalizedEmail;
+  }
+
+  if (name !== undefined) user.name = name;
+  if (phone !== undefined) user.phone = phone;
+  if (dateOfBirth !== undefined) user.dateOfBirth = dateOfBirth;
+  if (gender !== undefined) user.gender = gender;
+  if (address !== undefined) user.address = address;
+
+  await user.save();
+
+  return user;
+};
+
+export const updateUserPassword = async (userId, currentPassword, newPassword) => {
+    const user = await User.findById(userId).select("+password");
+
+    if (!user) {
+      throw new Error("User does not exist");
     }
 
-    if (password !== undefined) {
-     const hashedPassword = await bcrypt.hash(password, 12);
+    if (!newPassword || newPassword.length < 8) {
+        throw new Error("Password must be at least 8 characters");
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+
+    if (!isPasswordCorrect) {
+      throw new Error("Current password is incorrect");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
     user.password = hashedPassword;
-    }
-    
-    if(name !== undefined) user.name = name
-    if(phone !== undefined) user.phone = phone
-    if(dateOfBirth !== undefined) user.dateOfBirth = dateOfBirth
-    if(gender !== undefined) user.gender = gender 
-    if(address !== undefined) user.address = address 
 
-    await user.save()
-
-    return user
+    await user.save();
 }

@@ -45,6 +45,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
+import useAuthStore from '@/stores/auth.store';
 
 // ---- Helpers ----
 
@@ -303,12 +304,13 @@ const LeaderDialog = ({ open, onOpenChange, currentLeader, onAssign, isSaving })
     );
 };
 
-const SectionHeader = ({ icon, title, onEdit }) => (
+const SectionHeader = ({ icon, title, onEdit, role }) => (
     <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm font-semibold text-[#EDEDEF]">
             {icon}
             {title}
         </div>
+    {role === 'admin' &&
         <Button
             variant="ghost"
             size="sm"
@@ -317,11 +319,13 @@ const SectionHeader = ({ icon, title, onEdit }) => (
         >
             <EditIcon size={13} />
             Edit
-        </Button>
+        </Button>}
     </div>
 );
 
 const DepartmentDetails = () => {
+    const user = useAuthStore((state) => state.user)
+
     const { departmentId } = useParams();
     const navigate = useNavigate();
 
@@ -563,11 +567,12 @@ const DepartmentDetails = () => {
                     size="sm"
                     className="gap-1.5 text-[#8A8C94] hover:bg-[#141518] hover:text-[#EDEDEF]"
                 >
-                    <Link to="/admin/departments">
+                    <Link to={-1}>
                         <ArrowLeft size={16} />
                     </Link>
                 </Button>
 
+               {user.role === 'admin' &&
                 <div className="flex items-center gap-2">
                     <Button
                         asChild
@@ -617,7 +622,7 @@ const DepartmentDetails = () => {
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
-                </div>
+                </div>}
             </div>
 
             {error && <p className="text-sm text-[#D62839]">{error}</p>}
@@ -639,6 +644,7 @@ const DepartmentDetails = () => {
             <div className="rounded-xl border border-[#1C1D22] bg-[#111214] p-5">
                 <SectionHeader
                     icon={<Crown size={15} />}
+                    role={user.role}
                     title="Leader"
                     onEdit={() => setLeaderDialogOpen(true)}
                 />
@@ -653,6 +659,7 @@ const DepartmentDetails = () => {
             <div className="rounded-xl border border-[#1C1D22] bg-[#111214] p-5">
                 <SectionHeader
                     icon={<Shield size={15} />}
+                    role={user.role}
                     title={`Assistants (${assistants.length})`}
                     onEdit={() => setAssistantsDialogOpen(true)}
                 />
@@ -669,6 +676,7 @@ const DepartmentDetails = () => {
             {/* Workers */}
             <div className="rounded-xl border border-[#1C1D22] bg-[#111214] p-5">
                 <SectionHeader
+                    role={user.role}
                     icon={<UsersIcon size={15} />}
                     title={`Workers (${workers.length})`}
                     onEdit={() => setWorkersDialogOpen(true)}
@@ -698,7 +706,7 @@ const DepartmentDetails = () => {
                 currentLeader={department.leader}
                 onAssign={handleAssignLeader}
                 isSaving={isSavingLeader}
-            />
+                />
 
             <MembersDialog
                 open={assistantsDialogOpen}
@@ -708,7 +716,7 @@ const DepartmentDetails = () => {
                 members={assistants}
                 onAdd={handleAddAssistant}
                 onRemove={handleRemoveAssistant}
-            />
+                />
 
             <MembersDialog
                 open={workersDialogOpen}

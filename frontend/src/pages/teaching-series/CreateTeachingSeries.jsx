@@ -10,7 +10,7 @@ const CreateTeachingSeries = () => {
     const handleCreate = async (payload) => {
         try {
             const {data} = await createTeachingSeries(payload);
-            navigate(`/admin/teaching-series/${data.teachingSeries._id}`);
+            navigate(`/teaching-series`);
             toast.success('Teaching Series Created', {
                 description: `${data.teachingSeries.title} has been created successfully.`,
                 position: 'top-center',

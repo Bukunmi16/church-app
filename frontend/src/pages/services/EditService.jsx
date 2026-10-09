@@ -73,7 +73,7 @@ const EditService = () => {
                     const {data} = await getOneService(serviceId)
                     const service = data.service.service
 
-                    console.log(service);
+                    // console.log(service);
                     
 
                     initialFormData.title = service.title

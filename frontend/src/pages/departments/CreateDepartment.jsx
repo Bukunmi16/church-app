@@ -21,7 +21,7 @@ const CreateDepartment = () => {
                 color: "#f5f5f5", 
                 border: "1px solid #444",
             }})                     
-            navigate(`/admin/departments/${created._id}`);
+            navigate(`/departments`);
         } catch (error) {
             toast.error('Failed to Create Department', {
                 description: `Failed to create department. Please try again.`,

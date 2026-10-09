@@ -13,57 +13,37 @@ import ErrorPage from '../errors/ErrorPage'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 
 // ---- Helpers ----
 
 const ROLE_LABELS = { member: "Member", worker: "Worker", admin: "Admin" };
 
-const formatDate = (dateString) =>
-    new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    }).format(new Date(dateString));
-
 const getInitials = (name) => name?.slice(0, 2).toUpperCase() ?? "";
 
 // ---- Small building blocks ----
 
-const RoleBadge = ({ role }) => (
-    <span className="inline-flex w-fit items-center rounded-full bg-[#12183A] px-2.5 py-1 text-xs font-medium text-[#C7CEEA]">
-        {ROLE_LABELS[role] ?? role}
-    </span>
-);
+const UserCard = ({ user }) => (
+    <Link
+        to={user._id}
+        className="flex items-center gap-3 rounded-xl border border-[#1C1D22] bg-[#111214] p-3 transition-colors hover:border-[#2A2B31] hover:bg-[#141518]"
+    >
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#12183A]">
+            {user.profileImage?.url ? (
+                <img src={user.profileImage.url} alt={user.name} className="h-full w-full object-cover" />
+            ) : (
+                <span className="text-sm font-semibold text-[#EDEDEF]">{getInitials(user.name)}</span>
+            )}
+        </div>
 
-const StatusDot = ({ isActive }) => (
-    <span className="flex items-center gap-1.5 text-sm text-[#8A8C94]">
-        <span
-            className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-[#34D399]" : "bg-[#D62839]"}`}
-        />
-        {isActive ? "Active" : "Inactive"}
-    </span>
-);
-
-const Avatar = ({ user }) => (
-    <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#12183A]">
-        {user.profileImage?.url ? (
-            <img src={user.profileImage.url} alt={user.name} className="h-full w-full object-cover" />
-        ) : (
-            <span className="text-xs font-semibold text-[#EDEDEF]">{getInitials(user.name)}</span>
-        )}
-    </div>
+        <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-[#EDEDEF]">{user.name}</p>
+            <p className="truncate text-xs text-[#8A8C94]">{ROLE_LABELS[user.role] ?? user.role}</p>
+        </div>
+    </Link>
 );
 
 const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center gap-2 py-14 text-center">
+    <div className="col-span-full flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[#1C1D22] py-14 text-center">
         <p className="text-sm text-[#8A8C94]">No users match your filters.</p>
     </div>
 );
@@ -151,70 +131,33 @@ const ViewUsers = () => {
                 />
             </div>
 
-            {/* Role filter */}
-            <Tabs value={role || "all"} onValueChange={handleRoleChange}>
-                <TabsList className="bg-[#111214] ">
-                    <TabsTrigger className='text-white hover:text-grey' value="all">All</TabsTrigger>
-                    <TabsTrigger className='text-white hover:text-grey' value="member">Members</TabsTrigger>
-                    <TabsTrigger className='text-white hover:text-grey' value="worker">Workers</TabsTrigger>
-                </TabsList>
-            </Tabs>
+            {/* Role filter + sort (sort moved here from the old table's "Joined" header) */}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <Tabs value={role || "all"} onValueChange={handleRoleChange}>
+                    <TabsList className="bg-[#111214] ">
+                        <TabsTrigger className='text-white hover:text-grey' value="all">All</TabsTrigger>
+                        <TabsTrigger className='text-white hover:text-grey' value="member">Members</TabsTrigger>
+                        <TabsTrigger className='text-white hover:text-grey' value="worker">Workers</TabsTrigger>
+                    </TabsList>
+                </Tabs>
 
-            {/* Table */}
-            <div className="overflow-hidden rounded-xl border border-[#1C1D22] bg-[#111214]">
+                <button
+                    onClick={toggleSort}
+                    className="flex items-center gap-1.5 text-sm text-[#8A8C94] transition-colors hover:text-[#EDEDEF]"
+                >
+                    <ArrowUpDown size={14} />
+                    {sortOrder === "desc" ? "Newest first" : "Oldest first"}
+                </button>
+            </div>
+
+            {/* Cards */}
+            <div
+                className={`grid grid-cols-1 gap-3 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${
+                    isFetching ? "opacity-60" : "opacity-100"
+                }`}
+            >
                 {items.length > 0 ? (
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="border-[#1C1D22] hover:bg-transparent">
-                                <TableHead className="text-[#8A8C94]">User</TableHead>
-                                <TableHead className="text-[#8A8C94]">Email</TableHead>
-                                <TableHead className="text-[#8A8C94]">Phone</TableHead>
-                                <TableHead className="text-[#8A8C94]">Role</TableHead>
-                                <TableHead className="text-[#8A8C94]">Status</TableHead>
-                                <TableHead className="text-[#8A8C94]">
-                                    <button
-                                        onClick={toggleSort}
-                                        className="flex items-center gap-1.5 transition-colors hover:text-[#EDEDEF]"
-                                    >
-                                        Joined
-                                        <ArrowUpDown size={13} />
-                                    </button>
-                                </TableHead>
-                                <TableHead className="text-right text-[#8A8C94]">Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {items.map((user) => (
-                                <TableRow key={user._id} className="border-[#1C1D22] hover:bg-[#141518]">
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <Avatar user={user} />
-                                            <span className="truncate text-sm font-medium text-[#EDEDEF]">
-                                                {user.name}
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-sm text-[#8A8C94]">{user.email}</TableCell>
-                                    <TableCell className="text-sm text-[#8A8C94]">{user.phone || "—"}</TableCell>
-                                    <TableCell><RoleBadge role={user.role} /></TableCell>
-                                    <TableCell><StatusDot isActive={user.isActive} /></TableCell>
-                                    <TableCell className="text-sm text-[#8A8C94]">
-                                        {formatDate(user.createdAt)}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button
-                                            asChild
-                                            variant="outline"
-                                            size="sm"
-                                            className="border-[#1C1D22] bg-transparent text-[#EDEDEF] hover:bg-[#141518] hover:text-[#EDEDEF]"
-                                        >
-                                            <Link to={user._id}>View</Link>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                    items.map((user) => <UserCard key={user._id} user={user} />)
                 ) : (
                     <EmptyState />
                 )}

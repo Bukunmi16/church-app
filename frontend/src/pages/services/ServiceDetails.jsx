@@ -31,6 +31,7 @@ import {
 import { formatTime } from '@/utils'
 import { useNotificationStore } from '@/stores/notifications.store'
 import { toast } from 'sonner'
+import useAuthStore from '@/stores/auth.store'
 
 // ---- Helpers ----
 
@@ -92,7 +93,8 @@ const TeachingCard = ({ teaching }) => (
 
 const ServiceDetails = () => {
     const fetchUnreadNotifications = useNotificationStore((state) => state.fetchUnreadCount);
-
+    const user = useAuthStore((state) => state.user)
+    
     const { serviceId } = useParams()
     const navigate = useNavigate()
 
@@ -178,8 +180,8 @@ const ServiceDetails = () => {
                 </Link>
                 </Button>
 
-                <div className="flex items-center gap-2">
-                <Link to='edit'>
+                {user.role === 'admin' && <div className="flex items-center gap-2">
+                <Link to={`/admin/services/${serviceId}/edit`}>
                     <Button
                         variant="outline"
                         size="sm"
@@ -226,7 +228,7 @@ const ServiceDetails = () => {
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
-                </div>
+                </div>}
             </div>
 
             {/* Service overview: image and details as separate panels */}
@@ -322,6 +324,7 @@ const ServiceDetails = () => {
                         <p className="text-sm text-[#8A8C94]">
                             No teachings linked to this service yet.
                         </p>
+                        { user.role === 'admin' &&
                         <Button
                             asChild
                             size="sm"
@@ -334,6 +337,7 @@ const ServiceDetails = () => {
                               </div>
                             </Link>
                         </Button>
+                            }
                     </div>
                 )}
             </div>
