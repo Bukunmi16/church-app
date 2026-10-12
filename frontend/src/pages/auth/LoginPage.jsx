@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router";
 import useAuthStore from "@/stores/auth.store";
+import { toast } from "sonner";
 
 const LoginPage = () => {
     const login = useAuthStore((state) => state.login)
@@ -41,9 +42,25 @@ const LoginPage = () => {
                 navigate("/member");
             }
 
+            toast.success(`Welcome back ${data.user.name}`, {
+                      position: 'top-center',
+                      style: {
+                          background: "#202124",
+                          color: "#f5f5f5",
+                          border: "1px solid #008000",
+                        }        
+                    });            
+
         } catch (error) {
             console.log(error);
-            
+        toast.error(`Log in Failed`, {
+            description: error.response?.data?.message || 'Wrong credentials. Please try again.',
+            position: 'top-center',
+            style: {
+              background: "#202124",
+              color: "#f5f5f5",
+              border: "1px solid #FF0000",
+              }})            
         }
     };
 
@@ -63,7 +80,7 @@ const LoginPage = () => {
                     Welcome Back
                 </h1>
                 <p className="relative mt-3 max-w-sm text-center text-sm text-[#8A8C94]">
-                    Sign in to Rhema Chapel Ogbomoso's church management portal.
+                    Home of the Blessed People! 
                 </p>
             </div>
 
@@ -111,12 +128,12 @@ const LoginPage = () => {
                                 <Label htmlFor="password" className="text-[#EDEDEF]">
                                     Password
                                 </Label>
-                                <a
+                                {/* <a
                                     href="/forgot-password"
                                     className="text-xs font-medium text-[#8A8C94] transition-colors hover:text-[#D62839]"
                                 >
                                     Forgot password?
-                                </a>
+                                </a> */}
                             </div>
                             <div className="relative">
                                 <Input
@@ -139,7 +156,7 @@ const LoginPage = () => {
                                 </button>
                             </div>
                         </div>
-
+{/* 
                         <div className="flex items-center gap-2">
                             <Checkbox
                                 className="border-[#1C1D22] data-[state=checked]:bg-[#D62839] data-[state=checked]:border-[#D62839]"
@@ -147,7 +164,7 @@ const LoginPage = () => {
                             <Label htmlFor="remember" className="text-sm font-normal text-[#8A8C94]">
                                 Remember me
                             </Label>
-                        </div>
+                        </div> */}
 
                         <Button
                             type="submit"

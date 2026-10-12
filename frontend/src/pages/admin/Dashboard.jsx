@@ -73,7 +73,7 @@ const SectionCard = ({ title, action, children, className = "" }) => (
     <div className={`rounded-xl border border-[#1C1D22] bg-[#111214] p-5 ${className}`}>
         <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#EDEDEF]">{title}</h3>
-        <Link to={`${title === 'Recent Activity' ? '/admin/notifications' : ''}`} className="flex items-center gap-1 text-sm text-[#8A8C94] hover:text-[#D62839]">
+        <Link to={`${title === 'Recent Activity' ? '/notifications' : ''}`} className="flex items-center gap-1 text-sm text-[#8A8C94] hover:text-[#D62839]">
             {action}
         </Link>
         </div>
@@ -100,7 +100,7 @@ const EventCard = ({ event }) => (
  <div className="overflow-hidden rounded-lg border border-[#1C1D22] bg-[#0A0A0C]">
   <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#111214]">
     {event.image?.url ? (
-      <Link to={`/admin/events/${event._id}`} className="block h-full w-full">
+      <Link to={`/events/${event._id}`} className="block h-full w-full">
         <img
           src={event.image.url}
           alt={event.title}
@@ -134,6 +134,7 @@ const Dashboard = () => {
     const [ dashboard, setDashboard ] = useState(null)
     const [ isLoading, setIsLoading ] = useState(true)
     const [ error, setError ] = useState("")
+    
 
     useEffect(() => {
       const fetchDashboard = async () => {
@@ -170,13 +171,13 @@ const Dashboard = () => {
         <div className="space-y-6">
             {/* Overview stats */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <Link to="/admin/users">
+                <Link to="/users">
                     <StatCard label="Total Members" value={stats?.members ?? 0} icon={User2Icon} />
                 </Link>
-                <Link to="/admin/users">
+                <Link to="/users">
                     <StatCard label="Active Workers" value={stats?.workers ?? 0} icon={UserRoundGroupIcon} />
                 </Link>
-                <Link to="/admin/departments">
+                <Link to="/departments">
                     <StatCard label="Departments" value={stats?.departments ?? 0} icon={CirclePileIcon} />
                 </Link>                
             </div>
@@ -187,7 +188,7 @@ const Dashboard = () => {
                     {upcomingService ? (
                         <div className="flex flex-col gap-3">
                             {upcomingService.serviceImage?.url && (
-                            <Link to={`/admin/services/${upcomingService.id}`}>
+                            <Link to={`/services/${upcomingService._id}`}>
                                 <img
                                     src={upcomingService.serviceImage.url}
                                     alt={upcomingService.title}
@@ -247,7 +248,7 @@ const Dashboard = () => {
                         {unreadActivity.map((activity) => {
                             const Icon = activityIconMap[activity.type] ?? Bell;
                     return activity.isRead === false ? (
-                            <Link key={activity._id} to={`/admin/notifications/${activity._id}`} className="">
+                            <Link key={activity._id} to={`/notifications/${activity._id}`} className="">
                                 <div className="flex items-start gap-3 hover:bg-[#1C1D22] rounded-lg p-3 mb-0 transition-colors">
                                     <span className='h-2 w-2 rounded-full p-0.5 bg-[#D62839] self-center' ></span>
                                     <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0A0A0C]">

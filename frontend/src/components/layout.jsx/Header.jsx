@@ -2,10 +2,10 @@ import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useUIStore from "../../stores/ui.store";
 import useAuthStore from "@/stores/auth.store";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useNotificationStore } from "@/stores/notifications.store";
 import { useChurchInfoStore } from "@/stores/church-info.store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 // TODO: replace with real auth/user data once wired up
@@ -15,17 +15,24 @@ import { useEffect } from "react";
 const getInitials = (name) => name?.slice(0, 2).toUpperCase() ?? "";
 
 const Header = () => {
+    const [userView, setUserView] = useState(false)
+
     const currentUser = useAuthStore((state) => state.user)
     const unreadCount = useNotificationStore((state) => state.unreadCount) 
-    console.log(unreadCount)   
     const toggleSidebar = useUIStore((state) => state.toggleMobileSidebar)
     const expand = useUIStore((state) => !state.desktopSidebarOpen)
-
     const churchData = useChurchInfoStore((state) => state.churchInfo)
     const fetchChurchData = useChurchInfoStore((state) => state.fetchChurchInfo)
+
     useEffect(() => {
         fetchChurchData()
     }, [])
+
+    const location = useLocation()
+    const isAdminPage =  location.pathname.startsWith('/admin')
+    const isWorkerPage =  location.pathname.startsWith('/worker')
+
+    const eitherPage = isAdminPage || isWorkerPage
 
     return (
         <header className="flex h-16 items-center justify-between border-[#1C1D22] bg-[#0A0A0C] px-6">
@@ -59,7 +66,18 @@ const Header = () => {
 
             {/* Right side */}
             <div className="flex items-center gap-2">
-                <Link to="/admin/notifications">
+            
+            {currentUser.role === 'admin'  && eitherPage &&
+                <Button 
+                onClick={() => setUserView(!userView)}
+                asChild  className="gap-2 bg-ghost h-8 text-white border border-grey hover:border-none hover:bg-[#B91F2E] transition-all duration-500">
+                    <Link to={isWorkerPage ? '/admin' : '/worker'}>
+                          <div className='text-sm p-2 gap-2'>
+                            {isWorkerPage ? 'Back to Admin View' : 'Check User View'}
+                              </div>            
+                    </Link>
+            </Button>}
+                <Link to="/notifications">
                     <Button
                         variant="ghost"
                         size="icon"
@@ -77,9 +95,9 @@ const Header = () => {
 
                 {/* User profile */}
                 <button className="flex items-center gap-2.5 rounded-md py-1.5 pl-1.5 pr-2 transition-colors hover:bg-[#141518]">
-                    {currentUser.profilePicture ? (
+                    {currentUser.profileImage ? (
                         <img
-                            src={currentUser.profilePicture}
+                            src={currentUser?.profileImage.url}
                             alt={currentUser.name}
                             className="h-8 w-8 shrink-0 rounded-full object-cover"
                         />

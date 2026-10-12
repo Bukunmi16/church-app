@@ -40,7 +40,7 @@ const MONTH_NAMES = [
 
 const TeachingCard = ({ teaching }) => (
     <Link
-        to={`/admin/teachings/${teaching._id}`}
+        to={`/teachings/${teaching._id}`}
         className="flex flex-col overflow-hidden rounded-xl border border-[#1C1D22] bg-[#111214] transition-colors hover:border-[#2A2B31]"
     >
         <div className="flex  w-full items-center justify-center bg-[#0A0A0C]">

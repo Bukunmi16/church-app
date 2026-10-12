@@ -9,11 +9,11 @@ export const getAdminDashboard = async () => {
 export const getWorkerDashboard = async () => {
     const response = await api.get('/dashboard/worker')
 
-    return response.data
+    return response
 }
 
 export const getMemberDashboard = async () => {
     const response = await api.get('/dashboard/member')
 
-    return response.data
+    return response
 }

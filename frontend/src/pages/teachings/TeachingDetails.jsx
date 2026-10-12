@@ -260,7 +260,7 @@ const TeachingDetails = () => {
 
                 {/* Details — standalone */}
                 <div className="space-y-4 h-fit rounded-xl border border-[#1C1D22] bg-[#111214] p-6">
-                    <div className='flex justify-between'>
+                    <div className=''>
                         <span>
                         <h1 className="text-xl font-bold text-[#EDEDEF]">{teaching.title}</h1>
                         {teaching.preacher && (
@@ -270,8 +270,8 @@ const TeachingDetails = () => {
                             </div>
                         )}
                         </span>
-                        <div className='flex items-center gap-2 cursor-pointer hover:text-white text-sm text-[#8A8C94]'>
-                            <Clock size={13}/>
+                        <div className='flex items-center gap-2 cursor-pointer hover:text-white text-[10px] mt-2 text-[#8A8C94]'>
+                            <Clock size={10}/>
                              {formatDuration(teaching.duration)}
                         </div>
                     </div>
@@ -307,7 +307,7 @@ const TeachingDetails = () => {
                 <div className='flex flex-col gap-2'>
                     <span className='text-[12px] font-bold'>Related Service</span>
                     <RelatedCard
-                    to={`/admin/services/${teaching.service._id}`}
+                    to={`/services/${teaching.service._id}`}
                     icon={<CalendarDays size={16} className="text-[#EDEDEF]" />}
                     title={teaching.service.title}
                     label={`${teaching.service.day} Service`}
@@ -323,7 +323,7 @@ const TeachingDetails = () => {
                 <div className='flex flex-col gap-2'>
                 <span className='text-[12px] font-bold'>Related Teaching Series</span>
                     <RelatedCard
-                    to={`/admin/teaching-series/${teaching.series._id}`}
+                    to={`/teaching-series/${teaching.series._id}`}
                     icon={<Layers size={16} className="text-[#EDEDEF]" />}
                     label="Series"
                     title={teaching.series.title}

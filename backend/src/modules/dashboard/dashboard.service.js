@@ -56,7 +56,7 @@ export const getAdminDashboardData = async (userId) => {
 export const getWorkerDashboardData = async (userId) => {
     const now = new Date()
 
-    const [upcomingService, upcomingEvents, latestTeachings, recentNotifications] = await Promise.all([
+    const [upcomingService, upcomingEvents, latestTeachings, recentActivity] = await Promise.all([
         Service.findOne({
             date: {$gte: now},
         })
@@ -84,7 +84,7 @@ export const getWorkerDashboardData = async (userId) => {
         upcomingService,
         upcomingEvents,
         latestTeachings,
-        recentNotifications,
+        recentActivity,
     }
 }
 
@@ -95,7 +95,7 @@ export const getMemberDashboardData = async (userId) => {
     upcomingService,
     upcomingEvents,
     latestTeaching,
-    recentNotifications,
+    recentActivity,
   ] = await Promise.all([
     Service.findOne({
       date: { $gte: now },
@@ -124,6 +124,6 @@ export const getMemberDashboardData = async (userId) => {
     upcomingService,
     upcomingEvents,
     latestTeaching,
-    recentNotifications,
+    recentActivity,
   };
 };

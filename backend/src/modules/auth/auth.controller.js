@@ -12,7 +12,10 @@ export const register = async (req, res, next) => {
      })
 
     } catch (error) {
-        next(error)
+        res.status(400).json({
+            success: true,
+            message: error.message
+        })
     }
 }
 
@@ -34,7 +37,10 @@ export const login = async (req, res, next) => {
     }); 
 
     } catch (error) {
-        next(error)
+        res.status(400).json({
+            success: true,
+            message: error.message
+        })
     }
 }
 

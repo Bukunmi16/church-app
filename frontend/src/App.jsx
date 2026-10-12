@@ -157,7 +157,7 @@ function App() {
               WORKER
           ========================== */}
 
-          <Route element={<RoleRoute allowedRoles={["worker"]} />}>
+          <Route element={<RoleRoute allowedRoles={["worker", 'admin']} />}>
             <Route path="worker">
               <Route index element={<WorkerDashboard />} />
             </Route>
