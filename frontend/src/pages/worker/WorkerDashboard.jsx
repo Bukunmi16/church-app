@@ -32,7 +32,7 @@ import {
 // Single place to change if the member/worker routes live somewhere other than /app
 
 // ---- Helpers ----
-import { formatDate, formatRelativeTime } from '@/utils'; 
+import { formatDate, formatRelativeTime, formatTime } from '@/utils'; 
 
 const getImageUrl = (image) => (typeof image === "string" ? image : image?.url) || null;
 
@@ -254,8 +254,8 @@ const ServiceCard = ({ service }) => {
                         <div className="flex items-center gap-2">
                             <Clock size={13} className="shrink-0" />
                             <span>
-                                {service.startTime}
-                                {service.endTime ? ` – ${service.endTime}` : ""}
+                                {formatTime(service.startTime)}
+                                {service.endTime ? ` – ${formatTime(service.endTime)}` : ""}
                             </span>
                         </div>
                     )}

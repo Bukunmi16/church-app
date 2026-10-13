@@ -34,6 +34,8 @@ import TeachingSeries from './pages/teaching-series/TeachingSeries'
 import CreateTeachingSeries from './pages/teaching-series/CreateTeachingSeries'
 import TeachingSeriesDetails from './pages/teaching-series/TeachingSeriesDetails'
 import EditTeachingSeries from './pages/teaching-series/EditTeachingSeries'
+import Register from './pages/auth/Register'
+import LandingPage from './pages/LandingPage/LandingPage'
 
 function App() {
 
@@ -45,6 +47,8 @@ function App() {
 
   return (
       <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 

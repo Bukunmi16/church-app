@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import useAuthStore from "@/stores/auth.store";
 import { toast } from "sonner";
 
@@ -12,6 +12,10 @@ const LoginPage = () => {
     const login = useAuthStore((state) => state.login)
     const isLoading = useAuthStore((state) => state.isLoading)
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Set by the landing page when a visitor clicks an event/teaching: { resource: "events" | "teachings", id }
+    const redirectTo = location.state?.redirectTo;
 
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
@@ -34,13 +38,13 @@ const LoginPage = () => {
             const data = await login(formData);
             console.log('Logged In Successfully');
 
-            if (data.user.role === 'admin') {
-                navigate("/admin");
-            } else if (data.user.role === 'worker') {
-                navigate("/worker");
-            } else {
-                navigate("/member");
-            }
+            // Each role has its own area; a pending event/teaching lands inside the user's own area
+            const base =
+                data.user.role === 'admin' ? "/admin" :
+                data.user.role === 'worker' ? "/worker" :
+                "/member";
+
+            navigate(redirectTo ? `${base}/${redirectTo.resource}/${redirectTo.id}` : base);
 
             toast.success(`Welcome back ${data.user.name}`, {
                       position: 'top-center',
@@ -106,14 +110,33 @@ const LoginPage = () => {
                         </p>
                     </div>
 
+                    {/* Shown when a visitor was sent here from the landing page */}
+                    {redirectTo && (
+                        <p
+                            role="status"
+                            className="mb-5 rounded-lg border border-[#1C1D22] bg-[#0A0A0C] px-3 py-2.5 text-xs leading-relaxed text-[#8A8C94]"
+                        >
+                            Sign in to view the details you selected. New here?{" "}
+                            <Link
+                                to="/register"
+                                className="font-medium text-[#D62839] hover:underline"
+                            >
+                                Create an account
+                            </Link>
+                            .
+                        </p>
+                    )}
+
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-1.5">
                             <Label htmlFor="email" className="text-[#EDEDEF]">
                                 Email
                             </Label>
                             <Input
+                                id="email"
                                 name="email"
                                 type="email"
+                                autoComplete="email"
                                 disabled={isLoading}
                                 placeholder="you@rhemachapel.org"
                                 value={formData.email}
@@ -137,7 +160,9 @@ const LoginPage = () => {
                             </div>
                             <div className="relative">
                                 <Input
+                                    id="password"
                                     name="password"
+                                    autoComplete="current-password"
                                     disabled={isLoading}
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
@@ -175,6 +200,19 @@ const LoginPage = () => {
                         Log In
                         </Button>
                     </form>
+
+                    {/* New to the church? */}
+                    <div className="mt-6 border-t border-[#1C1D22] pt-5 text-center">
+                        <p className="text-sm text-[#8A8C94]">
+                            Don't have an account?{" "}
+                            <Link
+                                to="/register"
+                                className="font-medium text-[#D62839] hover:underline"
+                            >
+                                Create one
+                            </Link>
+                        </p>
+                    </div>
                 </div>
 
                 <p className="mt-6 text-xs text-[#6E7079]">

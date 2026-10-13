@@ -149,6 +149,8 @@ const Settings = () => {
 
     const [profile, setProfile] = useState(null);
     const [churchInfo, setChurchInfo] = useState(null);
+    console.log(churchInfo);
+    
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -311,6 +313,10 @@ const Settings = () => {
             email: churchInfo.email || "",
             website: churchInfo.website || "",
             motto: churchInfo.motto || "",
+            x: churchInfo.x || "",
+            facebook: churchInfo.facebook || "",
+            instagram: churchInfo.instagram || "",
+            youtube: churchInfo.youtube || "",
         });
         setChurchLogoFile(null);
         setChurchPreviewUrl(churchInfo.logo?.url || null);
@@ -453,6 +459,10 @@ const Settings = () => {
                         <InfoField label="Phone" value={churchInfo.phone} />
                         <InfoField label="Website" value={churchInfo.website} />
                         <InfoField label="Address" value={churchInfo.address} />
+                        <InfoField label="X" value={churchInfo.x} />
+                        <InfoField label="YouTube" value={churchInfo.youtube} />
+                        <InfoField label="Facebook" value={churchInfo.facebook} />
+                        <InfoField label="Instagram" value={churchInfo.instagram} />
                     </div>
                 </div>
             </SectionCard>}
@@ -637,7 +647,7 @@ const Settings = () => {
 
             {/* Church info edit dialog */}
             <Dialog open={churchDialogOpen} onOpenChange={setChurchDialogOpen}>
-                <DialogContent className="border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">
+                <DialogContent className="max-h-[85vh] overflow-y-auto border-[#1C1D22] bg-[#111214] text-[#EDEDEF]">
                     <DialogHeader>
                         <DialogTitle>Edit church info</DialogTitle>
                         <DialogDescription className="text-[#8A8C94]">
@@ -656,7 +666,7 @@ const Settings = () => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 ">
                                 <div className="space-y-1.5">
                                     <Label htmlFor="churchName" className="text-[#EDEDEF]">Name</Label>
                                     <Input
@@ -710,6 +720,42 @@ const Settings = () => {
                                         id="churchAddress"
                                         value={churchForm.address}
                                         onChange={(e) => setChurchForm((p) => ({ ...p, address: e.target.value }))}
+                                        className="border-[#1C1D22] bg-[#0A0A0C] text-[#EDEDEF] focus-visible:ring-[#D62839]"
+                                    />
+                                </div>
+                                <div className="space-y-1.5 sm:col-span-2">
+                                    <Label htmlFor="x" className="text-[#EDEDEF]">X</Label>
+                                    <Input
+                                        id="x"
+                                        value={churchForm.x}
+                                        onChange={(e) => setChurchForm((p) => ({ ...p, x: e.target.value }))}
+                                        className="border-[#1C1D22] bg-[#0A0A0C] text-[#EDEDEF] focus-visible:ring-[#D62839]"
+                                    />
+                                </div>
+                                <div className="space-y-1.5 sm:col-span-2">
+                                    <Label htmlFor="youtube" className="text-[#EDEDEF]">Youtube</Label>
+                                    <Input
+                                        id="youtube"
+                                        value={churchForm.youtube}
+                                        onChange={(e) => setChurchForm((p) => ({ ...p, youtube: e.target.value }))}
+                                        className="border-[#1C1D22] bg-[#0A0A0C] text-[#EDEDEF] focus-visible:ring-[#D62839]"
+                                    />
+                                </div>
+                                <div className="space-y-1.5 sm:col-span-2">
+                                    <Label htmlFor="facebook" className="text-[#EDEDEF]">Facebook</Label>
+                                    <Input
+                                        id="facebook"
+                                        value={churchForm.facebook}
+                                        onChange={(e) => setChurchForm((p) => ({ ...p, facebook: e.target.value }))}
+                                        className="border-[#1C1D22] bg-[#0A0A0C] text-[#EDEDEF] focus-visible:ring-[#D62839]"
+                                    />
+                                </div>
+                                <div className="space-y-1.5 sm:col-span-2">
+                                    <Label htmlFor="instagram" className="text-[#EDEDEF]">Instagram</Label>
+                                    <Input
+                                        id="instagram"
+                                        value={churchForm.instagram}
+                                        onChange={(e) => setChurchForm((p) => ({ ...p, instagram: e.target.value }))}
                                         className="border-[#1C1D22] bg-[#0A0A0C] text-[#EDEDEF] focus-visible:ring-[#D62839]"
                                     />
                                 </div>

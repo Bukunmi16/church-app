@@ -89,7 +89,7 @@ export const createEvent = async (data, userId, file) => {
         Event.find(filter)
         .skip(skip)
         .limit(limit)
-        .sort(sort)
+        .sort({startDate: 1})
         .lean(),
 
         Event.countDocuments()

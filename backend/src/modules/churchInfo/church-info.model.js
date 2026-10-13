@@ -45,8 +45,12 @@ const ChurchInfoSchema = new mongoose.Schema(
       trim: true,
     },
 
-    socialLinks: {
-      facebook: {
+    facebook: {
+        type: String,
+        trim: true,
+      },
+
+    telegram: {
         type: String,
         trim: true,
       },
@@ -65,7 +69,6 @@ const ChurchInfoSchema = new mongoose.Schema(
         type: String,
         trim: true,
       },
-    },
   },
   {
     timestamps: true,

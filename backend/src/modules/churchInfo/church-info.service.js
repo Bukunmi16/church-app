@@ -3,7 +3,7 @@ import ChurchInformation from "./church-info.model.js";
 
 export const getChurchInfo = async () => {
     const churchInfo = await ChurchInformation.findOne().lean();
-
+    
     return churchInfo;
     };
 
@@ -14,7 +14,7 @@ export const saveChurchInfo = async (data, file) => {
         churchInfo = new ChurchInformation();
     }
 
-    const { name, address, phone, email, website, description, socialLinks, motto } = data;
+    const { name, address, phone, email, website, description, x, facebook, youtube, instagram, telegram, motto } = data;
 
     if (file) {
         if(churchInfo?.logo?.publicId) {
@@ -30,13 +30,13 @@ export const saveChurchInfo = async (data, file) => {
     if(email) churchInfo.email = email;
     if(website) churchInfo.website = website;
     if(motto) churchInfo.motto = motto;
+    if(x) churchInfo.x = x;
+    if(facebook) churchInfo.facebook = facebook;
+    if(instagram) churchInfo.instagram = instagram;
+    if(youtube) churchInfo.youtube = youtube;
+    if(telegram) churchInfo.telegram = telegram;
     if(description) churchInfo.description = description;
 
-    if (socialLinks) {
-         churchInfo.socialLinks = {
-        ...churchInfo.socialLinks,
-        ...socialLinks,
-    }};
 
     await churchInfo.save();
 

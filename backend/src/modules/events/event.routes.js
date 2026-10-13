@@ -6,12 +6,11 @@ import upload from '../../middleware/upload.js'
 
 const router = express.Router()
 
-router.use(authMiddleware)
 
 router.get('/' , getAll)
-router.post('/', upload.single('image'), authorize("admin"), create)
-router.get('/:id', getOne)
-router.post('/:id', upload.single('image'), authorize("admin"), update)
-router.delete('/:id', authorize("admin"), deleteEvent)
+router.post('/', upload.single('image'), authMiddleware, authorize("admin"), create)
+router.get('/:id',authMiddleware, getOne)
+router.post('/:id', upload.single('image'), authMiddleware, authorize("admin"), update)
+router.delete('/:id',authMiddleware, authorize("admin"), deleteEvent)
 
 export default router

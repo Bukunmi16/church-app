@@ -1,4 +1,4 @@
-import { Bell, Menu } from "lucide-react";
+import { Bell, Eye, Menu, View } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useUIStore from "../../stores/ui.store";
 import useAuthStore from "@/stores/auth.store";
@@ -35,7 +35,7 @@ const Header = () => {
     const eitherPage = isAdminPage || isWorkerPage
 
     return (
-        <header className="flex h-16 items-center justify-between border-[#1C1D22] bg-[#0A0A0C] px-6">
+        <header className="flex h-16 items-center justify-between border-[#1C1D22] bg-[#0A0A0C] px-3 sm:px-6">
             {/* Left side */}
             <div className="flex items-center gap-4">
                 <Button
@@ -65,15 +65,16 @@ const Header = () => {
             </div>
 
             {/* Right side */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center sm:gap-2">
             
             {currentUser.role === 'admin'  && eitherPage &&
                 <Button 
                 onClick={() => setUserView(!userView)}
-                asChild  className="gap-2 bg-ghost h-8 text-white border border-grey hover:border-none hover:bg-[#B91F2E] transition-all duration-500">
+                asChild  className="gap-2 bg-ghost h-8 text-white border sm:border-grey hover:border-none hover:bg-[#B91F2E] transition-all duration-500">
                     <Link to={isWorkerPage ? '/admin' : '/worker'}>
-                          <div className='text-sm p-2 gap-2'>
-                            {isWorkerPage ? 'Back to Admin View' : 'Check User View'}
+                          <div className='text-sm sm:p-2 sm:gap-2'>
+                            <Eye className="sm:hidden" size={20}/>
+                            <span className="hidden sm:block">{isWorkerPage ? 'Back to Admin View' : 'Check User View'}</span>
                               </div>            
                     </Link>
             </Button>}
