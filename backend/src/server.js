@@ -1,56 +1,90 @@
-import dotenv from 'dotenv'
-dotenv.config()
 
-import express from 'express'
-import helmet from 'helmet'
-import { connectDB } from './config/db.js'
-import authRoutes from './modules/auth/auth.routes.js'
-import userRoutes from './modules/user/user.routes.js'
-import departmentRoutes from './modules/departments/department.routes.js'
-import serviceRoutes from './modules/services/service.routes.js'
-import eventRoutes from './modules/events/event.routes.js'
-import teachingSeriesRoutes from './modules/teachingSeries/teaching-series.routes.js'
-import teachingRoutes from './modules/teachings/teaching.routes.js'
-import notificationRoutes from './modules/notifications/notification.routes.js'
-import emailRoutes from './modules/email/email.route.js'
-import dashboardRoutes from './modules/dashboard/dashboard.routes.js'
-import churchInfoRoutes from './modules/churchInfo/church-info.routes.js'
-import cookieParser from 'cookie-parser'
-import cors from 'cors'
-import { apiLimiter } from './middleware/rate-limit.middleware.js'
+import "dotenv/config";
 
-const PORT = 3000
+import express from "express";
+import helmet from "helmet";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
-const app = express()
+import { connectDB } from "./config/db.js";
+import { apiLimiter } from "./middleware/rate-limit.middleware.js";
 
-app.use(helmet())
-app.use(express.json())
-app.use(cookieParser())
-app.use(cors({
-        origin: "http://localhost:5173",
-        credentials: true,
-    }))
+import authRoutes from "./modules/auth/auth.routes.js";
+import userRoutes from "./modules/user/user.routes.js";
+import departmentRoutes from "./modules/departments/department.routes.js";
+import serviceRoutes from "./modules/services/service.routes.js";
+import eventRoutes from "./modules/events/event.routes.js";
+import teachingSeriesRoutes from "./modules/teachingSeries/teaching-series.routes.js";
+import teachingRoutes from "./modules/teachings/teaching.routes.js";
+import notificationRoutes from "./modules/notifications/notification.routes.js";
+import emailRoutes from "./modules/email/email.route.js";
+import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
+import churchInfoRoutes from "./modules/churchInfo/church-info.routes.js";
+
+const PORT = process.env.PORT || 3000;
+
+const app = express();
+
+// Allowed frontend origins
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.NODE_ENV !== "production"
+    ? ["http://localhost:5173"]
+    : []),
+].filter(Boolean);
+
+// Security middleware
+app.use(helmet());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests without an Origin header, e.g. Postman
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+app.use(cookieParser());
+
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
 });
-app.use('/api', apiLimiter)
 
+app.use("/api", apiLimiter);
 
-app.use('/api/auth', authRoutes)
-app.use('/api/users', userRoutes)
-app.use('/api/departments', departmentRoutes)
-app.use('/api/services', serviceRoutes)
-app.use('/api/events', eventRoutes)
-app.use('/api/teachings', teachingRoutes)
-app.use('/api/teaching-series', teachingSeriesRoutes)
-app.use('/api/notifications', notificationRoutes)
-app.use('/api/email', emailRoutes)
-app.use('/api/dashboard', dashboardRoutes)
-app.use('/api/church-info', churchInfoRoutes)
+// API routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/departments", departmentRoutes);
+app.use("/api/services", serviceRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/teachings", teachingRoutes);
+app.use("/api/teaching-series", teachingSeriesRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/email", emailRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/church-info", churchInfoRoutes);
 
-connectDB().then(() => {
-    app.listen(PORT, () =>{
-        console.log(`Server running on PORT ${PORT}`);  
-    }) 
-    })
+// Start server only after MongoDB connects
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();

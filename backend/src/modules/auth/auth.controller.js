@@ -1,5 +1,5 @@
 import { loginUser, registerUser, refreshAccessToken  } from "./auth.service.js"
-
+import { refreshCookieOptions } from "../../config/cookie-options.js"
 
 export const register = async (req, res, next) => {
     try {
@@ -23,12 +23,7 @@ export const login = async (req, res, next) => {
     try {
     const result = await loginUser(req.body);
 
-    res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie("refreshToken", result.refreshToken, refreshCookieOptions);
 
     return res.status(200).json({
         success: true,
@@ -47,7 +42,13 @@ export const login = async (req, res, next) => {
 export const refreshToken = async (req, res) => {
     try {
         const token = req.cookies.refreshToken;
-
+       
+        if (!token) {
+          return res.status(401).json({
+            success: false,
+            message: "Refresh token is missing",
+          });
+        }
         const accessToken = await refreshAccessToken(token);
         
         return res.status(200).json({
@@ -71,11 +72,7 @@ export const getCurrentUser = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-    res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-    });
+    res.clearCookie("refreshToken", refreshCookieOptions)
 
     return res.status(200).json({
         success: true,
