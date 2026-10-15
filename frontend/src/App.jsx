@@ -8,6 +8,7 @@ import useAuthStore from './stores/auth.store'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import LoginPage from './pages/auth/LoginPage'
 import WorkerDashboard from './pages/worker/WorkerDashboard'
+import MemberDashboard from './pages/member/MemberDashboard'
 import RoleRoute from './components/auth/RoleRoute'
 import Unauthorized from './pages/errors/Unauthorized'
 import ServiceDetails from './pages/services/ServiceDetails'
@@ -174,7 +175,7 @@ function App() {
 
           <Route element={<RoleRoute allowedRoles={["member"]} />}>
             <Route path="member">
-              {/* <Route index element={<MemberDashboard />} /> */}
+              <Route index element={<MemberDashboard />} />
             </Route>
           </Route>
           

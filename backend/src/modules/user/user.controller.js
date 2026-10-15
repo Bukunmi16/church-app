@@ -96,7 +96,7 @@ export const deleteUser = async (req, res, next) => {
 export const update = async (req, res) => {
     try {
         const userId = req.user._id
-        const user = await updateUserDetails(userId, req.body, req.file)
+        const user = await updateUserDetails(userId, req.validated.body, req.file)
 
         res.status(200).json({
             message: "Your Details have been Updated Successfully",

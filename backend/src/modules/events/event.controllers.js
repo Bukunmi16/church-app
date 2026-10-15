@@ -3,7 +3,7 @@ import { createEvent, getAllEvents, getOneEvent, removeEvent, updateEvent } from
 
 export const create = async (req, res, next) => {
     try {
-        const event = await createEvent(req.body, req.user.id, req.file)
+        const event = await createEvent(req.validated.body, req.user.id, req.file)
 
         res.status(200).json({
             sucess: true,
@@ -46,7 +46,7 @@ export const getOne = async (req, res, next) => {
 
 export const update = async (req, res, next) => {
     try {
-        const event = await updateEvent(req.params.id, req.body, req.file)
+        const event = await updateEvent(req.params.id, req.validated.body, req.file)
         
         res.status(200).json({
         sucess: true,

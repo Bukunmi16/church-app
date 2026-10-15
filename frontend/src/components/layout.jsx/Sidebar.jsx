@@ -44,7 +44,7 @@ const navigation = [
             { label: "Teachings", path: "/teachings", icon: BookOpen },
             { label: "Teaching Series", path: "/teaching-series", icon: Rows4Icon },
             { label: "Events", path: "/events", icon: Calendar },
-            { label: "Users", path: "/users", icon: User2Icon },
+            { label: "Members", path: "/users", icon: User2Icon },
             { label: "Departments", path: "/departments", icon: CirclePileIcon },
         ],
     },

@@ -2,6 +2,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 import express from 'express'
+import helmet from 'helmet'
 import { connectDB } from './config/db.js'
 import authRoutes from './modules/auth/auth.routes.js'
 import userRoutes from './modules/user/user.routes.js'
@@ -16,12 +17,13 @@ import dashboardRoutes from './modules/dashboard/dashboard.routes.js'
 import churchInfoRoutes from './modules/churchInfo/church-info.routes.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
+import { apiLimiter } from './middleware/rate-limit.middleware.js'
 
 const PORT = 3000
 
 const app = express()
 
-
+app.use(helmet())
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
@@ -32,6 +34,7 @@ app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
 });
+app.use('/api', apiLimiter)
 
 
 app.use('/api/auth', authRoutes)

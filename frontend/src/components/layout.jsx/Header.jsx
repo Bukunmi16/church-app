@@ -33,7 +33,7 @@ const Header = () => {
     const isWorkerPage =  location.pathname.startsWith('/worker')
 
     const eitherPage = isAdminPage || isWorkerPage
-
+    console.log(currentUser)
     return (
         <header className="flex h-16 items-center justify-between border-[#1C1D22] bg-[#0A0A0C] px-3 sm:px-6">
             {/* Left side */}

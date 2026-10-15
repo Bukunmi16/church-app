@@ -284,7 +284,7 @@ const UserDetails = () => {
                           border: "1px solid #008000",
                         }        
                     });
-            navigate("/admin/users");
+            navigate("/users");
         } catch (err) {
             console.error(err);
             console.log({err});
@@ -403,6 +403,7 @@ const UserDetails = () => {
                         <InfoRow icon={<MapPin size={15} className="shrink-0" />}>
                             {user.address || "—"}
                         </InfoRow>
+                        
                         <InfoRow icon={<CalendarDays size={15} className="shrink-0" />}>
                             Joined {formatDate(user.createdAt)}
                         </InfoRow>

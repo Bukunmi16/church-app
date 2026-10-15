@@ -75,7 +75,7 @@ const UserAvatar = ({ user, size = 9 }) => (
 const UserRow = ({ user, onRemove, isRemoving }) => (
     <div className="flex items-center justify-between gap-3 rounded-lg border border-[#1C1D22] bg-[#0A0A0C] px-3 py-2">
         <div className="flex min-w-0 items-center gap-2.5">
-<Link to={`/admin/users/${user._id}`}>
+<Link to={`/users/${user._id}`}>
             <UserAvatar user={user} size={8} />
 </Link>
             <div className="min-w-0">
