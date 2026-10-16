@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useChurchInfoStore } from "@/stores/church-info.store";
-import { CHURCH_FALLBACK } from "./landing.config.js";
+import { CHURCH_FALLBACK } from "./Landing.config.js";
 
 // Church details from the existing store, with a fallback so the page never looks empty
 export const useChurchProfile = () => {
