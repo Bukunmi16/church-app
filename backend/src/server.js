@@ -36,9 +36,11 @@ const allowedOrigins = [
 // Security middleware
 app.use(helmet());
 
+console.log("Allowed origins:", allowedOrigins);
 app.use(
   cors({
     origin: (origin, callback) => {
+        console.log("Incoming origin:", origin);
       // Allow requests without an Origin header, e.g. Postman
       if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
