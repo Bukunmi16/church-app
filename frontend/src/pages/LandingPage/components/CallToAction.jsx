@@ -3,8 +3,8 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Container from "./Container";
 import Reveal from "./Reveal";
-import { ROUTES } from "../landing.config";
-import { FOCUS_RING, scrollToSection } from "../landing.utils";
+import { ROUTES } from "../Landing.config";
+import { FOCUS_RING, scrollToSection } from "../Landing.utils";
 
 const CallToAction = ({ church }) => (
     <section aria-labelledby="cta-heading" className="py-20 sm:py-28">

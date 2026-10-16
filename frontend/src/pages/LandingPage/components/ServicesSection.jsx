@@ -4,8 +4,8 @@ import Container from "./Container";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 import LandingImage from "./LandingImage";
-import { LANDING_IMAGES, SUNDAY_BREAKDOWN, WEEKLY_SERVICES } from "../landing.config";
-import { FOCUS_RING, mapsUrl } from "../landing.utils";
+import { LANDING_IMAGES, SUNDAY_BREAKDOWN, WEEKLY_SERVICES } from "../Landing.config";
+import { FOCUS_RING, mapsUrl } from "../Landing.utils";
 
 const ServiceCard = ({ service }) => {
     const Icon = service.icon;

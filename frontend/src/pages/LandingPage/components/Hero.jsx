@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import Container from "./Container";
 import Reveal from "./Reveal";
 import LandingImage from "./LandingImage";
-import { LANDING_IMAGES } from "../landing.config";
-import { FOCUS_RING, scrollToSection } from "../landing.utils";
+import { LANDING_IMAGES } from "../Landing.config";
+import { FOCUS_RING, scrollToSection } from "../Landing.utils";
 
 const Hero = ({ church }) => {
     const [mounted, setMounted] = useState(false);

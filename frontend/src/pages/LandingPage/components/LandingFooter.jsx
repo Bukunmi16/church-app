@@ -3,8 +3,8 @@ import { MapPin, Phone, Mail, Globe } from "lucide-react";
 import Container from "./Container";
 import ChurchMark from "./ChurchMark";
 import { YoutubeIcon, TelegramIcon, FacebookIcon, XIcon, InstagramIcon } from "./BrandIcons";
-import { NAV_LINKS, ROUTES, SOCIAL_LINKS, WEEKLY_SERVICES } from "../landing.config";
-import { FOCUS_RING, mapsUrl, normalizeUrl, scrollToSection, telHref } from "../landing.utils";
+import { NAV_LINKS, ROUTES, SOCIAL_LINKS, WEEKLY_SERVICES } from "../Landing.config";
+import { FOCUS_RING, mapsUrl, normalizeUrl, scrollToSection, telHref } from "../Landing.utils";
 
 const SOCIAL_ICONS = { youtube: YoutubeIcon, telegram: TelegramIcon };
 

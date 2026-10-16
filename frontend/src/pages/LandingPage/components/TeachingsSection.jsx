@@ -6,9 +6,9 @@ import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 import LandingImage from "./LandingImage";
 import AsyncState, { SkeletonGrid } from "./AsyncState";
-import { DETAIL_PATHS, ROUTES } from "../landing.config";
-import { useAsyncList } from "../landing.hooks";
-import { FOCUS_RING, formatDate } from "../landing.utils";
+import { DETAIL_PATHS, ROUTES } from "../Landing.config";
+import { useAsyncList } from "../Landing.hooks";
+import { FOCUS_RING, formatDate } from "../Landing.utils";
 
 const fetchLatestTeachings = async () => {
     const { data } = await getTeachings({ page: 1, limit: 6, sortBy: "createdAt", sortOrder: "desc" });

@@ -4,9 +4,9 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Container from "./Container";
 import ChurchMark from "./ChurchMark";
-import { NAV_LINKS, NAV_SECTION_IDS, ROUTES } from "../landing.config";
-import { useActiveSection } from "../landing.hooks";
-import { FOCUS_RING, scrollToSection } from "../landing.utils";
+import { NAV_LINKS, NAV_SECTION_IDS, ROUTES } from "../Landing.config";
+import { useActiveSection } from "../Landing.hooks";
+import { FOCUS_RING, scrollToSection } from "../Landing.utils";
 
 const NavItems = ({ activeId, onNavigate, className = "", linkClassName = "" }) => (
     <ul className={className}>

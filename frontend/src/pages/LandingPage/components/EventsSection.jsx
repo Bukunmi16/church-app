@@ -6,8 +6,8 @@ import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 import LandingImage from "./LandingImage";
 import AsyncState, { SkeletonGrid } from "./AsyncState";
-import { DETAIL_PATHS, ROUTES } from "../landing.config";
-import { useAsyncList } from "../landing.hooks";
+import { DETAIL_PATHS, ROUTES } from "../Landing.config";
+import { useAsyncList } from "../Landing.hooks";
 import {
     FOCUS_RING,
     eventDateParts,
