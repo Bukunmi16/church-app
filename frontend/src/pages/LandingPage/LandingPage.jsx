@@ -6,7 +6,7 @@ import EventsSection from "./components/EventsSection";
 import TeachingsSection from "./components/TeachingsSection";
 import CallToAction from "./components/CallToAction";
 import LandingFooter from "./components/LandingFooter";
-import { useChurchProfile } from "./landing.hooks";
+import { useChurchProfile } from "./Landing.hooks.js";
 
 // Public page: no auth, and deliberately outside the dashboard layout.
 const LandingPage = () => {
