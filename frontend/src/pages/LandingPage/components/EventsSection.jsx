@@ -15,7 +15,7 @@ import {
     getEventStatus,
     getImageUrl,
     isUpcomingEvent,
-} from "../landing.utils";
+} from "../Landing.utils";
 
 // Newest start dates come first, so upcoming events are always inside this window.
 // We then keep only events that haven't ended and show the soonest ones.
