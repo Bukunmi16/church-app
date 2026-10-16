@@ -20,7 +20,7 @@ import notificationRoutes from "./modules/notifications/notification.routes.js";
 import emailRoutes from "./modules/email/email.route.js";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 import churchInfoRoutes from "./modules/churchInfo/church-info.routes.js";
-
+ 
 const PORT = process.env.PORT || 3000;
 
 const app = express();
