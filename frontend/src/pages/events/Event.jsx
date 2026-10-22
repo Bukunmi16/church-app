@@ -28,9 +28,10 @@ import useAuthStore from '@/stores/auth.store';
 
 // ---- Small building blocks ----
 
-const EmptyState = ({ label, to }) => (
+const EmptyState = ({ label, to, user }) => (
     <div className="col-span-full flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[#1C1D22] py-14 text-center">
         <p className="text-sm text-[#8A8C94]">{label}</p>
+        {user && user.role === 'admin' && 
         <Button asChild size="sm" className="gap-2 bg-[#D62839] text-white hover:bg-[#B91F2E]">
             <Link to={to}>
                 <div className='flex justify-between items-center gap-2'>
@@ -39,6 +40,7 @@ const EmptyState = ({ label, to }) => (
                       </div>
             </Link>
         </Button>
+            }
     </div>
 );
 
@@ -183,7 +185,7 @@ const Event = () => {
                 {isFetching && (
                     <Loader2 size={16} className="animate-spin text-[#6E7079]" />
                 )}
-                {user.role === 'admin' && 
+                {user && user.role === 'admin' && 
                     <Button asChild size="sm" className="w-auto gap-1.5 bg-[#D62839] text-white hover:bg-[#B91F2E]">
                     <Link to="/admin/events/new">
                       <div className='flex justify-between items-center gap-2'>
@@ -211,6 +213,7 @@ const Event = () => {
                     <EmptyState
                         label="No events match your search."
                         to="/admin/events/new"
+                        user={user}
                     />
                 )}
             </div>

@@ -9,6 +9,8 @@ import { Sparkles, BookOpen, Flame } from "lucide-react";
 export const ROUTES = {
     login: "/login",
     register: "/register",
+    teachings: "/view-teachings",
+    events: "/view-events"
 };
 
 // Where a visitor should land AFTER logging in, when they clicked an event or

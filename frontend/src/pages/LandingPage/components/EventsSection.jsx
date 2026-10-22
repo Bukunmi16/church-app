@@ -36,7 +36,7 @@ const EventCard = ({ event }) => {
 
     return (
         <Link
-            to={ROUTES.login}
+            to={`${ROUTES.events}/${event._id}`}
             state={{ from: DETAIL_PATHS.event(event._id) }}
             className={`group flex h-full flex-col overflow-hidden rounded-2xl border border-[#1C1D22] bg-[#111214] transition-all duration-300 hover:-translate-y-1 hover:border-[#2A2B31] hover:shadow-[0_20px_40px_-20px_rgba(214,40,57,0.3)] motion-reduce:hover:translate-y-0 ${FOCUS_RING}`}
         >
@@ -138,10 +138,10 @@ const EventsSection = () => {
                 {status === "success" && (
                     <div className="mt-8 text-center">
                         <Link
-                            to={ROUTES.login}
+                            to={ROUTES.events}
                             className={`inline-flex items-center gap-2 rounded-md text-sm font-medium text-[#EDEDEF] transition-all hover:gap-3 hover:text-[#D62839] ${FOCUS_RING}`}
                         >
-                            Sign in to see all events
+                            See all Events
                             <ArrowRight size={16} aria-hidden="true" />
                         </Link>
                     </div>

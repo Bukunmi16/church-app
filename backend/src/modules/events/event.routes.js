@@ -19,7 +19,7 @@ router.post('/',
     validate(createEventSchema),
      create)
 
-router.get('/:id',authMiddleware, getOne)
+router.get('/:id'   , getOne)
 
 router.post('/:id', 
     authMiddleware, 

@@ -159,7 +159,7 @@ const EventDetails = () => {
                     </Link>
                 </Button>
 
-                {user.role === 'admin' &&
+                {user && user.role === 'admin' &&
                     <div className="flex items-center gap-2">
                     <Button
                         asChild

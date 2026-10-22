@@ -1,10 +1,12 @@
 import { AlertTriangle, RotateCw } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
+import useAuthStore from "@/stores/auth.store";
 
 const ErrorPage = ({
     error = "An unexpected error occurred. Please try again, or head back to the dashboard.",
 }) => {
+    const user = useAuthStore((state) => state.user)
     const navigate = useNavigate();
 
     return (
@@ -32,7 +34,13 @@ const ErrorPage = ({
                     Try again
                 </Button>
                 <Button asChild className="bg-[#D62839] text-white hover:bg-[#B91F2E]">
-                    <Link to="/admin">Return to dashboard</Link>
+                    {
+                        user ? (
+                        <Link to={`${user.role}`}>Return to Dashboard</Link>
+                    ) : (
+                        <Link to="/">Return to Home</Link>
+                        )
+                    }
                 </Button>
             </div>
         </div>

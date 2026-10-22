@@ -37,6 +37,7 @@ import TeachingSeriesDetails from './pages/teaching-series/TeachingSeriesDetails
 import EditTeachingSeries from './pages/teaching-series/EditTeachingSeries'
 import Register from './pages/auth/Register'
 import LandingPage from './pages/LandingPage/LandingPage'
+import GuestLayout from './components/layout.jsx/GuestLayout'
 
 function App() {
 
@@ -48,7 +49,32 @@ function App() {
 
   return (
       <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<LandingPage />} /> 
+
+      <Route element={<GuestLayout/>}>
+      
+      {/* Guest Teachings */}
+      <Route path="view-teachings">
+            <Route index element={<Teaching />} />
+            <Route path=":teachingId" element={<TeachingDetails />} />
+      </Route>
+
+          
+      {/* Guest Teaching Series */}
+      <Route path="view-teaching-series">
+        <Route index element={<TeachingSeries />} />
+        <Route path=":seriesId" element={<TeachingSeriesDetails />} />
+      </Route>
+      
+       
+      {/* Guest Events */}
+      <Route path="view-events">
+        <Route index element={<Event />} />
+        <Route path=":eventId" element={<EventDetails />} />
+      </Route>
+
+      </Route>
+      
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/unauthorized" element={<Unauthorized />} />

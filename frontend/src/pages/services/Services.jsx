@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link } from "react-router";
 import {
     Search,
@@ -50,10 +50,10 @@ const formatDate = (dateString) =>
 
 // ---- Small building blocks ----
 
-const EmptyState = ({ label, to }) => (
+const EmptyState = ({ label, to, user }) => (
     <div className="col-span-full flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[#1C1D22] py-14 text-center">
         <p className="text-sm text-[#8A8C94]">{label}</p> 
-        <Button asChild size="sm" className="gap-2 bg-[#D62839] text-white hover:bg-[#B91F2E]">
+        {user.role === 'admin' && <Button asChild size="sm" className="gap-2 bg-[#D62839] text-white hover:bg-[#B91F2E]">
             <Link to={to}>
                 <div className='flex justify-between items-center gap-2'>
                 <PlusCircle size={16} />
@@ -61,7 +61,7 @@ const EmptyState = ({ label, to }) => (
                 </div>
                 
             </Link>
-        </Button>
+        </Button>}
     </div>
 );
 
@@ -160,6 +160,15 @@ const Services = () => {
     const [ isFetching, setIsFetching ] = useState(true)
     const [ error, setError ] = useState("")
 
+    const listRef = useRef(null);    
+
+    useEffect(() => {
+      listRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, [page]);
+
     // Debounce search input so we don't fire a request on every keystroke
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -216,7 +225,7 @@ const Services = () => {
 
     
     return (
-        <div className="space-y-4">
+        <div className="space-y-4" ref={listRef}>
             {/* Search — own row, full width */}
             <div className="relative w-full">
                 <Search
@@ -282,6 +291,7 @@ const Services = () => {
                     <EmptyState
                         label="No services match your filters."
                         to="/admin/services/new"
+                        user={user}
                     />
                 )}
             </div>

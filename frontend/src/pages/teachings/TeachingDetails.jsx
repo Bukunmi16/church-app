@@ -193,7 +193,7 @@ const TeachingDetails = () => {
                     </Link>
                 </Button>
 
-               {user.role === 'admin' &&
+               {user && user.role === 'admin' &&
                 <div className="flex items-center gap-2">
                   <Link to={`/admin/teachings/${teachingId}/edit`}>
                     <Button
@@ -302,7 +302,7 @@ const TeachingDetails = () => {
                     )}
 
             {/* Related: service, series, department */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-">
+            {user && <div className="grid grid-cols-1 gap-4 sm:grid-cols-">
                 {teaching.service && (
                 <div className='flex flex-col gap-2'>
                     <span className='text-[12px] font-bold'>Related Service</span>
@@ -321,7 +321,7 @@ const TeachingDetails = () => {
                 )}
                 {teaching.series && (
                 <div className='flex flex-col gap-2'>
-                <span className='text-[12px] font-bold'>Related Teaching Series</span>
+                <span className='text-[12px] font-bold text-white'>Related Teaching Series</span>
                     <RelatedCard
                     to={`/teaching-series/${teaching.series._id}`}
                     icon={<Layers size={16} className="text-[#EDEDEF]" />}
@@ -332,7 +332,7 @@ const TeachingDetails = () => {
                     </div>
                 )}
 
-                {teaching.department && user.role === 'admin' && (
+                {teaching.department && user && user.role === 'admin' && (
                   <RelatedCard
                   to={`/admin/departments/${teaching.department._id}`}
                   icon={<Users size={16} className="text-[#EDEDEF]" />}
@@ -343,7 +343,7 @@ const TeachingDetails = () => {
 
                 
             {/* Created by */}
-            {teaching.createdBy && user.role === 'admin' && (
+            {teaching.createdBy && user && user.role === 'admin' && (
               <div className="flex items-center   gap-3 rounded-xl border border-[#1C1D22] bg-[#111214] p-4">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0A0A0C]">
                         <User size={16} className="text-[#8A8C94]" />
@@ -360,7 +360,7 @@ const TeachingDetails = () => {
                     </div>
                 </div>
             )}
-            </div>
+            </div>}
 
                 </div>
 

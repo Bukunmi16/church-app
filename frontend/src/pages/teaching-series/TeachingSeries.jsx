@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link } from "react-router";
 import {
     Search,
@@ -26,10 +26,10 @@ const MONTH_NAMES = [
 
 // ---- Small building blocks ----
 
-const EmptyState = ({ label, to }) => (
+const EmptyState = ({ label, to, user }) => (
     <div className="col-span-full flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[#1C1D22] py-14 text-center">
         <p className="text-sm text-[#8A8C94]">{label}</p>
-        <Button asChild size="sm" className="gap-2 bg-[#D62839] text-white hover:bg-[#B91F2E]">
+        {user.role === 'admin' && <Button asChild size="sm" className="gap-2 bg-[#D62839] text-white hover:bg-[#B91F2E]">
             <Link to={to}>
                 <div className='flex justify-between items-center gap-2'>
                 <PlusCircle size={16} />
@@ -37,6 +37,7 @@ const EmptyState = ({ label, to }) => (
                 </div>
             </Link>
         </Button>
+             }
     </div>
 );
 
@@ -113,6 +114,15 @@ const TeachingSeries = () => {
     const [isFetching, setIsFetching] = useState(true)
     const [error, setError] = useState("")
 
+    const listRef = useRef(null);
+
+    useEffect(() => {
+      listRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, [page]);
+
     // Debounce search input
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -163,7 +173,7 @@ const TeachingSeries = () => {
     return (
         <div className="space-y-4">
             {/* Search — own row, full width */}
-            <div className="relative w-full">
+            <div className="relative w-full" ref={listRef}>
                 <Search
                     size={16}
                     className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#6E7079]"
@@ -217,6 +227,7 @@ const TeachingSeries = () => {
                     <EmptyState
                         label="No teaching series match your search."
                         to="/admin/teaching-series/new"
+                        user={user}
                     />
                 )} 
             </div>

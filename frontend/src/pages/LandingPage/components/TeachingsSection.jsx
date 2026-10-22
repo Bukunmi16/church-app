@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { CalendarDays, Mic2, Play, Headphones, Lock, ArrowRight } from "lucide-react";
+import { CalendarDays, Mic2, Play, Headphones, Lock, ArrowRight, Touchpad } from "lucide-react";
 import { getTeachings } from "@/api/teachings.api";
 import Container from "./Container";
 import Reveal from "./Reveal";
@@ -21,7 +21,7 @@ const TeachingCard = ({ teaching }) => {
 
     return (
         <Link
-            to={ROUTES.login}
+            to={`${ROUTES.teachings}/${teaching._id}`}
             state={{ from: DETAIL_PATHS.teaching(teaching._id) }}
             className={`group flex h-full flex-col overflow-hidden rounded-2xl border border-[#1C1D22] bg-[#111214] transition-all duration-300 hover:-translate-y-1 hover:border-[#2A2B31] hover:shadow-[0_20px_40px_-20px_rgba(214,40,57,0.3)] motion-reduce:hover:translate-y-0 ${FOCUS_RING}`}
         >
@@ -66,8 +66,7 @@ const TeachingCard = ({ teaching }) => {
                 </div>
 
                 <p className="mt-auto flex items-center gap-1.5 pt-3 text-xs font-medium text-[#6E7079] transition-colors group-hover:text-[#D62839]">
-                    <Lock size={12} aria-hidden="true" />
-                    Sign in to view details
+                    View Details
                 </p>
             </div>
         </Link>
@@ -117,10 +116,10 @@ const TeachingsSection = () => {
                 {status === "success" && (
                     <div className="mt-8 text-center">
                         <Link
-                            to={ROUTES.login}
+                            to={ROUTES.teachings}
                             className={`inline-flex items-center gap-2 rounded-md text-sm font-medium text-[#EDEDEF] transition-all hover:gap-3 hover:text-[#D62839] ${FOCUS_RING}`}
                         >
-                            Sign in to see all teachings
+                            See all teachings
                             <ArrowRight size={16} aria-hidden="true" />
                         </Link>
                     </div>
